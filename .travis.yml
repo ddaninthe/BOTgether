@@ -3,3 +3,6 @@ jdk: oraclejdk11
 
 # Ubuntu 16.04
 dist: trusty
+
+before_install:
+    - chmod a+x ./mvnw
