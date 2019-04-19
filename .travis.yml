@@ -1,0 +1,5 @@
+language: java
+jdk: oraclejdk11
+
+# Ubuntu 16.04
+dist: trusty
