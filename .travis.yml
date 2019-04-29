@@ -5,6 +5,15 @@ dist: trusty
 before_install:
 - chmod a+x ./mvnw
 
+addons:
+  sonarcloud:
+    organization: "ddaninthe-github"
+    token:
+      secure: gzyogFoRQI+rtqFmV57EH8vLwJzNE2yKpfp2GDiHRR9YXrK6TBAFEG4b6+oBucP6UqXyV15EBzvt2vUC64iCadk2E9SQxN0GOo7ONV8ql/cn1+Gu9FfvBsuA9nIztKcJTniQl7wgsA39GcbFkgGft7TDP0hOx9nBuhg+rpYHiavXOv8nZIqD4jK9MGasE7oZlxYEwUqbqWq5OQ6Ujujwg5u4WjtvaSXngm1qH98yMCGDWnTpCK2Opth0+x3eCYQpf8nt3QsUqf50oC12UEB+op2WcN9H5imetkz63/TPLWTwZ5Pqmo4IRMyfqeM1g8/EpzYV5axiBh6OqhrFg0tb2yXn3OSWTLl+wzWb3mg3Zfx//c9W5HmCpor8jknZqY7E55hMWXVGs5eKEdfJG6i/P2UoGpmcZl/OD2xctl686zUvk01ovwzX2cis9mVQnzadaGo2pLwqS7FJgzhhpJKZ+CKh7+yPn4JlbSp1dTY885P+HiZLnGMTugzKGIgajan8Kev8ihRk9eTWnTQtoxtGihNaQ7LK054Vx7vM+x8fNUr4ThV279ibCNIawLs6Q9xJicUFvSX5ZFrFSsizmCFJc2ozv+P/AiFPoXjRQ77AG8xxmcJeBBZzXu1nLnAZPdYWe/bGwFI3LtrvzmeBU4WqtocxkNGvLyyDk+wfV5WjMMg=
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+  - sonar-scanner
+
 deploy:
   provider: launchpad
   slug: "~esgi/botgether/+git/master"
