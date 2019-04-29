@@ -1,12 +1,10 @@
 package com.al.botgether.controller;
 
-import com.al.botgether.entity.User;
+import com.al.botgether.dto.UserDto;
 import com.al.botgether.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,16 +20,20 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable("id") String userId) {
+    public ResponseEntity getUser(@PathVariable("id") String userId) {
         if (userId.matches("^\\d+$")) {
-            return userService.getById(userId);
-        } else {
-            List<User> users = userService.getUserByUsername(userId);
-            if (users.size() == 0) {
-                // Not found
-                return null;
+            UserDto userDto = userService.getById(userId);
+            if (userDto == null) { // Not found
+                return ResponseEntity.notFound().build();
             } else {
-                return users.get(0);
+                return ResponseEntity.ok(userDto);
+            }
+        } else {
+            List<UserDto> usersDto = userService.getUserByUsername(userId);
+            if (usersDto.isEmpty()) { // Not found
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok(usersDto.get(0));
             }
         }
     }
