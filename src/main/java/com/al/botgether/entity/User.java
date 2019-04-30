@@ -1,6 +1,5 @@
 package com.al.botgether.entity;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,10 +26,5 @@ public class User implements Serializable {
         this.username = username;
         this.discriminator = discriminator;
         this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "User: " + id + ", " + username + "#" + discriminator + ", " + email;
     }
 }
