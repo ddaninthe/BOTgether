@@ -25,4 +25,21 @@ public class MapperTest {
         assertThat(userDto.getDiscriminator()).isEqualTo("2703");
         assertThat(userDto.getEmail()).isEqualTo("john@spring.com");
     }
+
+    @Test
+    public void should_map_dto_to_user() {
+        UserDto userDto = new UserDto();
+        userDto.setId("0123456789");
+        userDto.setUsername("John");
+        userDto.setDiscriminator("2703");
+        userDto.setEmail("jonh@spring.com");
+
+        User user = EntityMapper.instance.userDtoToUser(userDto);
+
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isEqualTo("0123456789");
+        assertThat(user.getUsername()).isEqualTo("John");
+        assertThat(user.getDiscriminator()).isEqualTo("2703");
+        assertThat(user.getEmail()).isEqualTo("jonh@spring.com");
+    }
 }

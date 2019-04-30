@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -39,5 +38,11 @@ public class UserService {
         return userRepository.findById(id)
                 .map(EntityMapper.instance::userToUserDto)
                 .orElse(null);
+    }
+
+    @Transactional
+    public UserDto saveUser(UserDto userDto){
+        User user = EntityMapper.instance.userDtoToUser(userDto);
+        return EntityMapper.instance.userToUserDto(userRepository.save(user));
     }
 }

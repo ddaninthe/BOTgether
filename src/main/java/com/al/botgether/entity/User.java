@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
 public class User implements Serializable {
 

@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -41,5 +42,16 @@ public class UserController {
                 return ResponseEntity.ok().headers(headers).body(usersDto.get(0));
             }
         }
+    }
+
+    @PostMapping
+    public ResponseEntity createUser(@RequestBody UserDto userDto) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+        userService.saveUser(userDto);
+        return ResponseEntity.created(URI.create("/users/" + userDto.getId()))
+                .headers(headers)
+                .body(userDto);
     }
 }

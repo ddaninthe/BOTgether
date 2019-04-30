@@ -33,7 +33,12 @@ public class UserRepositoryTest {
     UserRepository userRepository;
 
     @Test
-    public void should_find_one_user() {
+    public void should_find_user_by_id() {
+        assertThat(userRepository.findById("0123456789")).isNotNull();
+    }
+
+    @Test
+    public void should_find_one_user_by_username() {
         assertThat(userRepository.findByUsername("Uram")).hasSize(1);
     }
 }
