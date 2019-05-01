@@ -1,11 +1,14 @@
 package com.al.botgether.controller;
 
 import com.al.botgether.dto.UserDto;
+import com.al.botgether.entity.User;
+import com.al.botgether.repository.UserRepository;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -21,9 +24,11 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @SuppressWarnings("squid:S2699") // Remove Sonar Warning for "no assertion"
 public class UserControllerTest {
-
     @LocalServerPort
     private int port;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private String userTestId;
 
@@ -57,12 +62,30 @@ public class UserControllerTest {
             .post("/users")
         .then()
             .statusCode(201)
-            .body("id", is(dto.getId()))
-            .body("username", is(dto.getUsername()))
-            .body("discriminator", is(dto.getDiscriminator()))
-            .body("email", is(dto.getEmail()))
+            .body("id", is(userTestId))
+            .body("username", is("John"))
+            .body("discriminator", is("0123"))
+            .body("email", is("john@test.com"))
             .extract().header("Location");
 
         assertThat(location).contains("/users/" + userTestId);
+    }
+
+    @Test
+    public void should_return_user() {
+        User user = new User(userTestId, "John", "0123", "john@test.com");
+        userRepository.save(user);
+
+        UserDto userGet =
+        when()
+            .get("/users/" + userTestId)
+        .then()
+            .statusCode(200)
+            .extract().body().as(UserDto.class);
+
+        assertThat(userGet.getId()).isEqualTo(userTestId);
+        assertThat(userGet.getUsername()).isEqualTo("John");
+        assertThat(userGet.getDiscriminator()).isEqualTo("0123");
+        assertThat(userGet.getEmail()).isEqualTo("john@test.com");
     }
 }

@@ -16,17 +16,17 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final HttpHeaders headers;
 
     @Autowired
     public UserController(UserService userService){
         this.userService = userService;
+        headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getUser(@PathVariable("id") String userId) {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-
         if (userId.matches("^\\d+$")) {
             UserDto userDto = userService.getById(userId);
             if (userDto == null) { // Not found
@@ -46,9 +46,6 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity createUser(@RequestBody UserDto userDto) {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-
         userService.saveUser(userDto);
         return ResponseEntity.created(URI.create("/users/" + userDto.getId()))
                 .headers(headers)

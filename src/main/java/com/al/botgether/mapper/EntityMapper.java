@@ -1,6 +1,8 @@
 package com.al.botgether.mapper;
 
+import com.al.botgether.dto.EventDto;
 import com.al.botgether.dto.UserDto;
+import com.al.botgether.entity.Event;
 import com.al.botgether.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -13,4 +15,7 @@ public interface EntityMapper {
 
     UserDto userToUserDto(User user);
     User userDtoToUser(UserDto user);
+
+    EventDto eventToEventDto(Event event);
+    Event eventDtoToEvent(EventDto event);
 }
