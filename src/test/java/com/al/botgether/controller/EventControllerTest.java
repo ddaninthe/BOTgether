@@ -2,12 +2,14 @@ package com.al.botgether.controller;
 
 
 import com.al.botgether.dto.EventDto;
+import com.al.botgether.repository.EventRepository;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.jdbc.Sql;
@@ -20,7 +22,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static groovy.json.JsonOutput.toJson;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @Sql(
@@ -29,20 +31,21 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
-
 @Sql(
         statements = {
-                "delete from Event"
+                "delete from Event where id = 1234"
         },
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
 )
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @SuppressWarnings("squid:S2699") // Remove Sonar Warning for "no assertion"
 public class EventControllerTest {
     @LocalServerPort
     private int port;
+
+    @Autowired
+    private EventRepository eventRepository;
 
     @Before
     public void setup() {
@@ -60,7 +63,6 @@ public class EventControllerTest {
     @Test
     public void should_create_event() {
         EventDto dto = new EventDto();
-        dto.setId(12345);
         dto.setTitle("Another Test Event");
         dto.setDescription("Let's dance");
         dto.setEventDate(DateUtils.truncate(new Date(), Calendar.SECOND)); // Milliseconds are not stored into DataBase
@@ -73,14 +75,15 @@ public class EventControllerTest {
                     .post("/events")
                 .then()
                     .statusCode(201)
-                    .header("Location", is("/events/12345"))
+                    .header("Location", containsString("/events/"))
                     .extract().body().as(EventDto.class);
 
         assertThat(createdEvent).isNotNull();
-        assertThat(createdEvent.getId()).isEqualTo(12345);
         assertThat(createdEvent.getTitle()).isEqualTo("Another Test Event");
         assertThat(createdEvent.getDescription()).isEqualTo("Let's dance");
         assertThat(createdEvent.getEventDate()).isEqualTo(dto.getEventDate());
+
+        eventRepository.deleteById(createdEvent.getId());
     }
 
     @Test

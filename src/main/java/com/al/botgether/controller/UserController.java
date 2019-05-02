@@ -51,4 +51,12 @@ public class UserController {
                 .headers(headers)
                 .body(userDto);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteUser(@PathVariable("id") String id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent()
+                .headers(headers)
+                .build();
+    }
 }

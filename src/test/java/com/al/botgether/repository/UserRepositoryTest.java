@@ -12,14 +12,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Sql(
         statements = {
-                "insert into User (id, username, discriminator, email) values ('0123456789', 'Uram', '9182', null)"
+                "insert into User (id, username, discriminator, email) values ('0123456789', 'JDoe', '9182', null)"
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
 
 @Sql(
         statements = {
-                "delete from User"
+                "delete from User where id = '0123456789'"
         },
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
 )
@@ -39,6 +39,6 @@ public class UserRepositoryTest {
 
     @Test
     public void should_find_one_user_by_username() {
-        assertThat(userRepository.findByUsername("Uram")).hasSize(1);
+        assertThat(userRepository.findByUsername("JDoe")).hasSize(1);
     }
 }

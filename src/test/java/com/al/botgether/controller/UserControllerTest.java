@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -20,6 +21,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
+@Sql(
+        statements = {
+                "delete from User where id = '102938'"
+        },
+        executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+)
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @SuppressWarnings("squid:S2699") // Remove Sonar Warning for "no assertion"
@@ -87,5 +94,16 @@ public class UserControllerTest {
         assertThat(userGet.getUsername()).isEqualTo("John");
         assertThat(userGet.getDiscriminator()).isEqualTo("0123");
         assertThat(userGet.getEmail()).isEqualTo("john@test.com");
+    }
+
+    @Test
+    public void should_delete_user() {
+        User user = new User(userTestId, "John", "0123", "john@test.com");
+        userRepository.save(user);
+
+        when()
+            .delete("/users/" + userTestId)
+        .then()
+            .statusCode(204);
     }
 }

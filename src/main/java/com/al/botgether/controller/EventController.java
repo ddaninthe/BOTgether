@@ -36,10 +36,10 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity createEvent(@RequestBody EventDto eventDto) {
-        eventService.saveEvent(eventDto);
-        return ResponseEntity.created(URI.create("/events/" + eventDto.getId()))
+        EventDto newEvent = eventService.saveEvent(eventDto);
+        return ResponseEntity.created(URI.create("/events/" + newEvent.getId()))
                 .headers(headers)
-                .body(eventDto);
+                .body(newEvent);
     }
 
     @PutMapping("/{id]")
@@ -51,6 +51,8 @@ public class EventController {
     @DeleteMapping("/{id}")
     public ResponseEntity deleteEvent(@PathVariable("id") long eventId) {
         eventService.deleteEvent(eventId);
-        return ResponseEntity.noContent().headers(headers).build();
+        return ResponseEntity.noContent()
+                .headers(headers)
+                .build();
     }
 }

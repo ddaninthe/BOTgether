@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Sql(
         statements = {
-                "delete from Event"
+                "delete from Event where id = 123456789"
         },
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
 )
