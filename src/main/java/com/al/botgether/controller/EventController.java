@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
-
 @RestController
 @RequestMapping("/events")
 public class EventController {
@@ -33,6 +32,8 @@ public class EventController {
             return ResponseEntity.ok().headers(headers).body(eventDto);
         }
     }
+
+    // TODO: get from date to date by user
 
     @PostMapping
     public ResponseEntity createEvent(@RequestBody EventDto eventDto) {

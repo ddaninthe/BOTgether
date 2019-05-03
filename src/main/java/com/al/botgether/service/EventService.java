@@ -17,6 +17,8 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
+
+
     @Transactional
     public EventDto getById(long id) {
         return eventRepository.findById(id)
@@ -32,6 +34,7 @@ public class EventService {
 
     @Transactional
     public void updateEvent(EventDto eventDto) {
+        // TODO: delete useless Availabilities
         if (eventDto.getEventDate() != null) eventRepository.updateEventDate(eventDto.getId(), eventDto.getEventDate());
         if (eventDto.getTitle() != null) eventRepository.updateEventTitle(eventDto.getId(), eventDto.getTitle());
         if (eventDto.getDescription() != null) eventRepository.updateEventDescription(eventDto.getId(), eventDto.getDescription());

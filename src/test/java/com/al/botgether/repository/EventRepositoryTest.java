@@ -1,6 +1,5 @@
 package com.al.botgether.repository;
 
-import com.al.botgether.dto.EventDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Sql(
         statements = {
-                "insert into Event (id, title, description, eventDate) values (123456789, 'Test Event', 'This a normal event', null)"
+                "insert into Event (id, title, description, event_date) values (123456789, 'Test Event', 'This a normal event', null)"
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
@@ -36,4 +35,6 @@ public class EventRepositoryTest {
     public void should_find_event_by_id() {
         assertThat(eventRepository.findById((long) 123456789)).isNotNull();
     }
+
+    // TODO: Test other methods
 }

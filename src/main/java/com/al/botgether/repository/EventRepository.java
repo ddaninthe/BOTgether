@@ -21,9 +21,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     public void updateEventDescription(@Param("id") long id, @Param("new_description") String description);
 
     @Modifying
-    @Query("Update Event Set eventDate = :new_date Where id = :id")
+    @Query("Update Event Set event_date = :new_date Where id = :id")
     public void updateEventDate(@Param("id") long id, @Param("new_date") Date date);
 
-    @Query("Select e From Event e Where eventDate is not null And eventDate between :from_date and :to_date")
+    @Query("Select e From Event e Where event_date is not null And event_date between :from_date and :to_date")
     public List<Event> getAllFromDateToDate(@Param("from_date") Date from, @Param("to_date") Date to);
 }

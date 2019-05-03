@@ -14,6 +14,8 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static groovy.json.JsonOutput.toJson;
@@ -80,7 +82,7 @@ public class UserControllerTest {
 
     @Test
     public void should_return_user() {
-        User user = new User(userTestId, "John", "0123", "john@test.com");
+        User user = new User(userTestId, "John", "0123", "john@test.com", new ArrayList<>());
         userRepository.save(user);
 
         UserDto userGet =
@@ -98,7 +100,7 @@ public class UserControllerTest {
 
     @Test
     public void should_delete_user() {
-        User user = new User(userTestId, "John", "0123", "john@test.com");
+        User user = new User(userTestId, "John", "0123", "john@test.com", new ArrayList<>());
         userRepository.save(user);
 
         when()

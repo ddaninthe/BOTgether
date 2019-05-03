@@ -27,7 +27,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @Sql(
         statements = {
-                "insert into Event (id, title, description, eventDate) values (1234, 'Test Event Before', 'A Before Event', null)"
+                "insert into Event (id, title, description, event_date) values (1234, 'Test Event Before', 'A Before Event', null)"
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
