@@ -15,11 +15,14 @@ script:
 - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
 
 deploy:
-  provider: s3
+  provider: elasticbeanstalk
   access_key_id: AKIAIJ2ZDBIOBL75OJ6Q
   secret_access_key:
     secure: eMNY0/kSyH7TgHR46Ds9zrcdlTwZiNCjEi4OiOFcD558+8CVBF6FmSvRgOxD4n2mJk88hKhTozHvNS9AenGhGoP6DHPXSc3FLb5B5QUQk4MDl+WZuwVEZ0UlVZ+MEJBja4I5dswKkDlGEvfsDlJtcgssEbIrh50nH3txMqp4A7hYS89QfzvKQrYOunbrUzqSmTIGy+SQ5czjtHbuiHAxm7M0y1oALD5z8hKeLtpSX7hBAeEjBJfK+ZGOogYoEddFpQm+kXufbcGdjox83XrZ+NNVENGRkt0GKDKtnQnO84bbyIgZzKJ2l/1b7xSpbrEimUe28qh5ftwHipmxqFkClyDo41tI0vSxgLjYodcuB23cVhv+R3hEcfzQ43LgYnLSET/Si/TC1BQTIU/4jiPCLQFj8Bez6yzBTl3IqZLrDEzmf+yASCWiF6lZcEVZCdP3VcRGINBPwZ6RYpXkJ09H0yvxDS+TJVEgs+tPS6v5OjrBmmugXPJJmMtrGCmxIkSq8nxZsrK08Ylk0tDppdUELkVvhG3JKdfDaKvE1aNS/J4eIC3SX+oKTER819d6K3oJSpHnsi/9zReTaCH3zSv57lXKGv83wYz7jcSr2Eegwih5DNmEBHPI6i17oGbhZHVCnlNH74YvWrHJTz11kHqyY03VSecJnRAVVrCd4tdRFAs=
-  bucket: S3 Bucket
+  region: "eu-west-3"  
+  app: "Jee"
+  env: "Jee2-env"
+  bucket_name: "jee2.0"
   skip_cleanup: true
   on:
     branch: release
