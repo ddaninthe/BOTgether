@@ -45,4 +45,9 @@ public class UserService {
         User user = EntityMapper.instance.userDtoToUser(userDto);
         return EntityMapper.instance.userToUserDto(userRepository.save(user));
     }
+
+    @Transactional
+    public void deleteUser(String id) {
+        userRepository.deleteById(id);
+    }
 }

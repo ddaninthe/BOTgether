@@ -12,14 +12,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Sql(
         statements = {
-                "insert into User (id, username, discriminator, email) values ('0123456789', 'JDoe', '9182', null)"
+                "insert into Event (id, title, description, event_date) values (123456789, 'Test Event', 'This a normal event', null)"
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
 
 @Sql(
         statements = {
-                "delete from User where id = '0123456789'"
+                "delete from Event where id = 123456789"
         },
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
 )
@@ -27,18 +27,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
-public class UserRepositoryTest {
-
+public class EventRepositoryTest {
     @Autowired
-    private UserRepository userRepository;
+    private EventRepository eventRepository;
 
     @Test
-    public void should_find_user_by_id() {
-        assertThat(userRepository.findById("0123456789")).isNotNull();
+    public void should_find_event_by_id() {
+        assertThat(eventRepository.findById((long) 123456789)).isNotNull();
     }
 
-    @Test
-    public void should_find_one_user_by_username() {
-        assertThat(userRepository.findByUsername("JDoe")).hasSize(1);
-    }
+    // TODO: Test other methods
 }

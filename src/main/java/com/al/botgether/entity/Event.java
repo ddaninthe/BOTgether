@@ -5,10 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -16,13 +15,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class User implements Serializable {
+public class Event implements Serializable {
     @Id
-    private String id;
-    private String username;
-    private String discriminator;
-    private String email;
+    @GeneratedValue
+    private long id;
+    private String title;
+    private String description;
+    @Column(name = "event_date")
+    private Date eventDate;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "event")
     List<Availability> availabilities;
 }
