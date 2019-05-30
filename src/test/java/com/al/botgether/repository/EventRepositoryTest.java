@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Sql(
         statements = {
-                "insert into User (id, username, discriminator, email) values ('0123456789', 'JDoe', '9182', null)",
+                "insert into User (id, username, discriminator) values ('0123456789', 'JDoe', '9182')",
                 "insert into Event (id, title, description, event_date, creator) values (123456789, 'Test Event', 'This a normal event', null, '0123456789')"
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD

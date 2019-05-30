@@ -29,5 +29,5 @@ public class Event implements Serializable {
     private User creator;
 
     @OneToMany(mappedBy = "event")
-    List<Availability> availabilities;
+    private List<Availability> availabilities;
 }

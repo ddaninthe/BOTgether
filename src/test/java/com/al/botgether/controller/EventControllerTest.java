@@ -28,7 +28,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @Sql(
         statements = {
-                "insert into User (id, username, discriminator, email) values ('0123456789', 'JDoe', '9182', null)",
+                "insert into User (id, username, discriminator) values ('0123456789', 'JDoe', '9182')",
                 "insert into Event (id, title, description, creator, event_date) values (1234, 'Test Event Before', 'A Before Event', '0123456789', null)"
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD

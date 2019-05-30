@@ -17,11 +17,11 @@ import java.util.Date;
 @Embeddable
 public class AvailabilityKey implements Serializable {
     @Column(name = "user_id")
-    String userId;
+    private String userId;
 
     @Column(name = "event_id")
-    long eventId;
+    private long eventId;
 
     @Column(name = "availability_date")
-    Date availabilityDate;
+    private Date availabilityDate;
 }

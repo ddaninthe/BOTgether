@@ -1,8 +1,7 @@
 package com.al.botgether.client;
 
-import discord4j.core.event.domain.message.MessageCreateEvent;
-import reactor.core.publisher.Mono;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public interface Command {
-    Mono<Void> execute(MessageCreateEvent event);
+    void execute(MessageReceivedEvent event);
 }

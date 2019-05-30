@@ -26,13 +26,12 @@ public class MapperTest {
         userDto.setId("0123456789");
         userDto.setUsername("John");
         userDto.setDiscriminator("2703");
-        userDto.setEmail("john@spring.com");
         return userDto;
     }
 
     @Test
     public void should_map_user_to_dto() {
-        User user = new User("0123456789", "John", "2703", "john@spring.com", new ArrayList<>(), new ArrayList<>());
+        User user = new User("0123456789", "John", "2703", new ArrayList<>(), new ArrayList<>());
 
         UserDto userDto = EntityMapper.instance.userToUserDto(user);
 
@@ -40,7 +39,6 @@ public class MapperTest {
         assertThat(userDto.getId()).isEqualTo("0123456789");
         assertThat(userDto.getUsername()).isEqualTo("John");
         assertThat(userDto.getDiscriminator()).isEqualTo("2703");
-        assertThat(userDto.getEmail()).isEqualTo("john@spring.com");
     }
 
     @Test
@@ -53,14 +51,13 @@ public class MapperTest {
         assertThat(user.getId()).isEqualTo("0123456789");
         assertThat(user.getUsername()).isEqualTo("John");
         assertThat(user.getDiscriminator()).isEqualTo("2703");
-        assertThat(user.getEmail()).isEqualTo("john@spring.com");
         assertThat(user.getAvailabilities()).isNull();
     }
 
     @Test
     public void should_map_event_to_dto() {
         Date date = new Date();
-        User user = new User("0123456789", "John", "2703", "john@spring.com", new ArrayList<>(), new ArrayList<>());
+        User user = new User("0123456789", "John", "2703", new ArrayList<>(), new ArrayList<>());
         Event event = new Event(123456789, "First Event", "This is a random event", date, user, new ArrayList<>());
 
         EventDto eventDto = EntityMapper.instance.eventToEventDto(event);
@@ -93,7 +90,7 @@ public class MapperTest {
 
     @Test
     public void should_map_availability_to_dto() {
-        User user = new User("123456789", "Avail", "0123", null, new ArrayList<>(), new ArrayList<>());
+        User user = new User("123456789", "Avail", "0123", new ArrayList<>(), new ArrayList<>());
         Event event = new Event(124313, "Title", "Some nice description", null, user, new ArrayList<>());
         Availability availability = new Availability(user, event, new Date());
 
@@ -137,14 +134,13 @@ public class MapperTest {
         assertThat(user.getId()).isEqualTo("0123456789");
         assertThat(user.getUsername()).isEqualTo("John");
         assertThat(user.getDiscriminator()).isEqualTo("2703");
-        assertThat(user.getEmail()).isEqualTo("john@spring.com");
     }
 
     @Test
     public void should_map_availabilities_to_dto_list() {
         List<Availability> availabilities = new ArrayList<>();
 
-        User user = new User("123456789", "Avail", "0123", null, new ArrayList<>(), new ArrayList<>());
+        User user = new User("123456789", "Avail", "0123", new ArrayList<>(), new ArrayList<>());
         Event event = new Event(124313, "Title", "Some nice description", null, user, new ArrayList<>());
         Date date = new Date();
 

@@ -21,11 +21,10 @@ public class User implements Serializable {
     private String id;
     private String username;
     private String discriminator;
-    private String email;
 
     @OneToMany(mappedBy = "creator")
-    List<Event> createdEvents;
+    private List<Event> createdEvents;
 
     @OneToMany(mappedBy = "user")
-    List<Availability> availabilities;
+    private List<Availability> availabilities;
 }

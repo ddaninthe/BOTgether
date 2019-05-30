@@ -1,24 +1,38 @@
 package com.al.botgether.client;
 
-import discord4j.core.DiscordClient;
-import discord4j.core.DiscordClientBuilder;
-import discord4j.core.event.domain.message.MessageCreateEvent;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-public class BotClient {
+import javax.security.auth.login.LoginException;
+import java.util.Map;
+
+public class BotClient extends ListenerAdapter {
     private static final String TOKEN = "NTY1OTcxNDUxMzcxMzIzMzk0.XO-pBQ.9HAmIQuOtGgS8SgfX93CUc7Irsg";
     private static final String COMMAND_PREFIX = "$";
 
     public static void startBot() {
-        final DiscordClient client = new DiscordClientBuilder(TOKEN).build();
-        client.getEventDispatcher().on(MessageCreateEvent.class)
-            .flatMap(event -> Mono.justOrEmpty(event.getMessage().getContent())
-                .flatMap(content -> Flux.fromIterable(CommandManager.commands.entrySet())
-                    .filter(entry -> content.startsWith(COMMAND_PREFIX + entry.getKey()))
-                    .flatMap(entry -> entry.getValue().execute(event))
-                    .next()))
-            .subscribe();
-        client.login().block();
+        try {
+            JDA jda = new JDABuilder(TOKEN).build();
+            jda.addEventListener(new BotClient());
+        } catch (LoginException e) {
+            System.out.println("LoginException: " + e);
+        }
+    }
+
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event) {
+        String message = event.getMessage().getContentDisplay();
+
+        if (message.startsWith(COMMAND_PREFIX)) {
+            for (Map.Entry<String, Command> entry : CommandManager.commands.entrySet()) {
+                if (message.startsWith(COMMAND_PREFIX + entry.getKey())) {
+                    entry.getValue().execute(event);
+                    return;
+                }
+            }
+            event.getChannel().sendMessage("Unknown command, please see supported commands with `$help`").queue();
+        }
     }
 }
