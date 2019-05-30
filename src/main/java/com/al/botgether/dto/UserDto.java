@@ -14,5 +14,4 @@ public class UserDto {
     private String username;
     private String discriminator;
     private String email;
-    private List<AvailabilityDto> availabilities;
 }

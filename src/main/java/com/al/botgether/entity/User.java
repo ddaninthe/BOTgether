@@ -23,6 +23,9 @@ public class User implements Serializable {
     private String discriminator;
     private String email;
 
+    @OneToMany(mappedBy = "creator")
+    List<Event> createdEvents;
+
     @OneToMany(mappedBy = "user")
     List<Availability> availabilities;
 }

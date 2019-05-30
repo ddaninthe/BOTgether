@@ -20,9 +20,14 @@ public interface EntityMapper {
     EntityMapper instance = Mappers.getMapper(EntityMapper.class);
 
     UserDto userToUserDto(User user);
+    @Mapping(target = "createdEvents", ignore = true)
+    @Mapping(target = "availabilities", ignore = true)
     User userDtoToUser(UserDto user);
 
+    @Mapping(source ="creator", target = "creatorDto")
     EventDto eventToEventDto(Event event);
+    @Mapping(source ="creatorDto", target = "creator")
+    @Mapping(target = "availabilities", ignore = true)
     Event eventDtoToEvent(EventDto event);
 
     @Mapping(source = "user", target = "userDto")

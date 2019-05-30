@@ -82,7 +82,7 @@ public class UserControllerTest {
 
     @Test
     public void should_return_user() {
-        User user = new User(userTestId, "John", "0123", "john@test.com", new ArrayList<>());
+        User user = new User(userTestId, "John", "0123", "john@test.com", new ArrayList<>(), new ArrayList<>());
         userRepository.save(user);
 
         UserDto userGet =
@@ -100,7 +100,7 @@ public class UserControllerTest {
 
     @Test
     public void should_delete_user() {
-        User user = new User(userTestId, "John", "0123", "john@test.com", new ArrayList<>());
+        User user = new User(userTestId, "John", "0123", "john@test.com", new ArrayList<>(), new ArrayList<>());
         userRepository.save(user);
 
         when()

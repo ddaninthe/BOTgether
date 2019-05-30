@@ -2,6 +2,7 @@ package com.al.botgether.controller;
 
 
 import com.al.botgether.dto.EventDto;
+import com.al.botgether.dto.UserDto;
 import com.al.botgether.repository.EventRepository;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
@@ -27,13 +28,15 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @Sql(
         statements = {
-                "insert into Event (id, title, description, event_date) values (1234, 'Test Event Before', 'A Before Event', null)"
+                "insert into User (id, username, discriminator, email) values ('0123456789', 'JDoe', '9182', null)",
+                "insert into Event (id, title, description, creator, event_date) values (1234, 'Test Event Before', 'A Before Event', '0123456789', null)"
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
 @Sql(
         statements = {
-                "delete from Event where id = 1234"
+                "delete from Event where id = 1234",
+                "delete from User where id = '0123456789'"
         },
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
 )
@@ -62,9 +65,15 @@ public class EventControllerTest {
 
     @Test
     public void should_create_event() {
+        UserDto creator = new UserDto();
+        creator.setId("0123456789");
+        creator.setDiscriminator("9182");
+        creator.setUsername("JDoe");
+
         EventDto dto = new EventDto();
         dto.setTitle("Another Test Event");
         dto.setDescription("Let's dance");
+        dto.setCreatorDto(creator);
         dto.setEventDate(DateUtils.truncate(new Date(), Calendar.SECOND)); // Milliseconds are not stored into DataBase
 
         EventDto createdEvent =
@@ -98,10 +107,11 @@ public class EventControllerTest {
         assertThat(result.getId()).isEqualTo(1234);
         assertThat(result.getTitle()).isEqualTo("Test Event Before");
         assertThat(result.getDescription()).isEqualTo("A Before Event");
+        assertThat(result.getCreatorDto().getId()).isEqualTo("0123456789");
         assertThat(result.getEventDate()).isNull();
     }
 
-    // TODO: update tests
+    // TODO: tests PUT method
 
     @Test
     public void should_delete_event() {

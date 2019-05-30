@@ -15,5 +15,5 @@ public class EventDto {
     private String title;
     private String description;
     private Date eventDate;
-    private List<AvailabilityDto> availabilities;
+    private UserDto creatorDto;
 }
