@@ -41,15 +41,11 @@ public class UserRepositoryTest {
     public void should_find_user_by_id() {
         Optional<User> optionalUser  = userRepository.findById("0123456789");
         assertThat(optionalUser.isPresent()).isTrue();
-        User user = optionalUser.get();
-        assertThat(user).isNotNull();
-        assertThat(user.getId()).isEqualTo("0123456789");
-        assertThat(user.getUsername()).isEqualTo("JDoe");
-        assertThat(user.getCreatedEvents()).hasSize(1);
-    }
-
-    @Test
-    public void should_find_one_user_by_username() {
-        assertThat(userRepository.findByUsername("JDoe")).hasSize(1);
+        optionalUser.ifPresent(user -> {
+            assertThat(user).isNotNull();
+            assertThat(user.getId()).isEqualTo("0123456789");
+            assertThat(user.getUsername()).isEqualTo("JDoe");
+            assertThat(user.getCreatedEvents()).hasSize(1);
+        });
     }
 }

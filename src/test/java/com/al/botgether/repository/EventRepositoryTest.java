@@ -1,5 +1,6 @@
 package com.al.botgether.repository;
 
+import com.al.botgether.entity.Event;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,5 +41,19 @@ public class EventRepositoryTest {
         assertThat(eventRepository.findById((long) 123456789)).isNotNull();
     }
 
-    // TODO: Test other methods
+    @Test
+    public void should_rename_event_title() {
+        eventRepository.updateEventTitle(123456789, "New Title");
+        Optional<Event> eventOptional = eventRepository.findById((long) 123456789);
+        assertThat(eventOptional.isPresent()).isTrue();
+        eventOptional.ifPresent(event -> assertThat(event.getTitle()).isEqualTo("New Title"));
+    }
+
+    @Test
+    public void should_modify_event_description() {
+        eventRepository.updateEventDescription(123456789, "New Test description");
+        Optional<Event> eventOptional = eventRepository.findById((long) 123456789);
+        assertThat(eventOptional.isPresent()).isTrue();
+        eventOptional.ifPresent(event -> assertThat(event.getDescription()).isEqualTo("New Test description"));
+    }
 }

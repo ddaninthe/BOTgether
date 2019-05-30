@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
@@ -14,6 +14,7 @@ public class EventDto {
     private long id;
     private String title;
     private String description;
+    @Column(name = "event_date")
     private Date eventDate;
     private UserDto creatorDto;
 }

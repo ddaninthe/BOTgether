@@ -14,16 +14,12 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Long> {
     @Modifying
     @Query("Update Event Set title = :new_title Where id = :id")
-    public void updateEventTitle(@Param("id") long id, @Param("new_title") String title);
+    void updateEventTitle(@Param("id") long id, @Param("new_title") String title);
 
     @Modifying
     @Query("Update Event Set description = :new_description Where id = :id")
-    public void updateEventDescription(@Param("id") long id, @Param("new_description") String description);
-
-    @Modifying
-    @Query("Update Event Set event_date = :new_date Where id = :id")
-    public void updateEventDate(@Param("id") long id, @Param("new_date") Date date);
+    void updateEventDescription(@Param("id") long id, @Param("new_description") String description);
 
     @Query("Select e From Event e Where event_date is not null And event_date between :from_date and :to_date")
-    public List<Event> getAllFromDateToDate(@Param("from_date") Date from, @Param("to_date") Date to);
+    List<Event> getAllFromDateToDate(@Param("from_date") Date from, @Param("to_date") Date to);
 }

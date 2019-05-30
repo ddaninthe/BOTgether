@@ -43,10 +43,13 @@ public class EventController {
                 .body(newEvent);
     }
 
-    @PutMapping("/{id]")
-    public ResponseEntity updateEvent(@RequestBody EventDto eventDto) {
+    @PutMapping("/{id}")
+    public ResponseEntity updateEvent(@PathVariable("id") long eventId, @RequestBody EventDto eventDto) {
+        eventDto.setId(eventId);
         eventService.updateEvent(eventDto);
-        return ResponseEntity.noContent().headers(headers).build();
+        return ResponseEntity.noContent()
+                .headers(headers)
+                .build();
     }
 
     @DeleteMapping("/{id}")

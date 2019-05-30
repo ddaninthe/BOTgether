@@ -5,8 +5,8 @@ import org.springframework.web.client.RestTemplate;
 
 class HttpClient {
     private final static String BASE_URL = "http://localhost:8080";
-    private RestTemplate rest;
-    private HttpHeaders headers;
+    private final RestTemplate rest;
+    private final HttpHeaders headers;
     private HttpStatus status;
 
     HttpClient() {
@@ -23,10 +23,11 @@ class HttpClient {
         return responseEntity.getBody();
     }
 
-    void post(String uri, String json) {
+    String post(String uri, String json) {
         HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
         ResponseEntity<String> responseEntity = rest.exchange(BASE_URL + uri, HttpMethod.POST, requestEntity, String.class);
         this.setStatus(responseEntity.getStatusCode());
+        return responseEntity.getBody();
     }
 
     String put(String uri, String json) {

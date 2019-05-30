@@ -3,6 +3,7 @@ package com.al.botgether.controller;
 
 import com.al.botgether.dto.EventDto;
 import com.al.botgether.dto.UserDto;
+import com.al.botgether.entity.Event;
 import com.al.botgether.repository.EventRepository;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
@@ -111,7 +113,35 @@ public class EventControllerTest {
         assertThat(result.getEventDate()).isNull();
     }
 
-    // TODO: tests PUT method
+    @Test
+    public void should_update_event_title() {
+        given()
+            .contentType(ContentType.JSON)
+            .body("{\"title\": \"Test Rename\"}")
+        .when()
+            .put("/events/1234")
+        .then()
+            .statusCode(204);
+
+        Optional<Event> event = eventRepository.findById((long) 1234);
+        assertThat(event.isPresent()).isTrue();
+        event.ifPresent(value -> assertThat(value.getTitle()).isEqualTo("Test Rename"));
+    }
+
+    @Test
+    public void should_update_event_description() {
+        given()
+            .contentType(ContentType.JSON)
+            .body("{\"description\": \"Another description\"}")
+        .when()
+            .put("/events/1234")
+        .then()
+            .statusCode(204);
+
+        Optional<Event> event = eventRepository.findById((long) 1234);
+        assertThat(event.isPresent()).isTrue();
+        event.ifPresent(value -> assertThat(value.getDescription()).isEqualTo("Another description"));
+    }
 
     @Test
     public void should_delete_event() {
