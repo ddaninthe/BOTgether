@@ -31,17 +31,18 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @Sql(
         statements = {
                 "insert into User (id, username, discriminator) values ('0123456789', 'JDoe', '9182')",
-                "insert into Event (id, title, description, creator, event_date) values (1234, 'Test Event Before', 'A Before Event', '0123456789', null)"
+                "insert into Event (id, title, description, creator, event_date) values (9876543210, 'Test Event Before', 'A Before Event', '0123456789', null)"
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
 @Sql(
         statements = {
-                "delete from Event where id = 1234",
+                "delete from Event where id = 9876543210",
                 "delete from User where id = '0123456789'"
         },
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
 )
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @SuppressWarnings("squid:S2699") // Remove Sonar Warning for "no assertion"
@@ -101,12 +102,12 @@ public class EventControllerTest {
     public void should_find_event_by_id() {
         EventDto result =
             when()
-                .get("/events/1234")
+                .get("/events/9876543210")
             .then()
                 .statusCode(200)
                 .extract().body().as(EventDto.class);
 
-        assertThat(result.getId()).isEqualTo(1234);
+        assertThat(result.getId()).isEqualTo(9876543210L);
         assertThat(result.getTitle()).isEqualTo("Test Event Before");
         assertThat(result.getDescription()).isEqualTo("A Before Event");
         assertThat(result.getCreatorDto().getId()).isEqualTo("0123456789");
@@ -119,11 +120,11 @@ public class EventControllerTest {
             .contentType(ContentType.JSON)
             .body("{\"title\": \"Test Rename\"}")
         .when()
-            .put("/events/1234")
+            .put("/events/9876543210")
         .then()
             .statusCode(204);
 
-        Optional<Event> event = eventRepository.findById((long) 1234);
+        Optional<Event> event = eventRepository.findById(9876543210L);
         assertThat(event.isPresent()).isTrue();
         event.ifPresent(value -> assertThat(value.getTitle()).isEqualTo("Test Rename"));
     }
@@ -134,11 +135,11 @@ public class EventControllerTest {
             .contentType(ContentType.JSON)
             .body("{\"description\": \"Another description\"}")
         .when()
-            .put("/events/1234")
+            .put("/events/9876543210")
         .then()
             .statusCode(204);
 
-        Optional<Event> event = eventRepository.findById((long) 1234);
+        Optional<Event> event = eventRepository.findById(9876543210L);
         assertThat(event.isPresent()).isTrue();
         event.ifPresent(value -> assertThat(value.getDescription()).isEqualTo("Another description"));
     }
@@ -146,7 +147,7 @@ public class EventControllerTest {
     @Test
     public void should_delete_event() {
         when()
-            .delete("/events/1234")
+            .delete("/events/9876543210")
         .then()
             .statusCode(204);
     }

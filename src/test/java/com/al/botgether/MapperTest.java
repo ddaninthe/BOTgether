@@ -4,6 +4,7 @@ import com.al.botgether.dto.AvailabilityDto;
 import com.al.botgether.dto.EventDto;
 import com.al.botgether.dto.UserDto;
 import com.al.botgether.entity.Availability;
+import com.al.botgether.entity.AvailabilityKey;
 import com.al.botgether.entity.Event;
 import com.al.botgether.entity.User;
 import com.al.botgether.mapper.EntityMapper;
@@ -100,6 +101,20 @@ public class MapperTest {
         assertThat(dto.getAvailabilityDate()).isEqualTo(availability.getAvailabilityDate());
         assertThat(dto.getEventDto().getId()).isEqualTo(124313);
         assertThat(dto.getUserDto().getId()).isEqualTo("123456789");
+    }
+
+    @Test
+    public void should_map_availability_to_dto_when_only_key() {
+        Date date = new Date();
+        AvailabilityKey key = new AvailabilityKey("0123456789", 123456789, date);
+        Availability a = new Availability();
+        a.setId(key);
+
+        AvailabilityDto dto = EntityMapper.instance.availabilityToAvailabilityDto(a);
+        assertThat(dto).isNotNull();
+        assertThat(dto.getAvailabilityDate().getTime()).isEqualTo(date.getTime());
+        assertThat(dto.getUserDto().getId()).isEqualTo("0123456789");
+        assertThat(dto.getEventDto().getId()).isEqualTo(123456789);
     }
 
     @Test

@@ -20,12 +20,12 @@ public class Availability implements Serializable {
 
     @ManyToOne
     @MapsId("user_id")
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
     @ManyToOne
     @MapsId("event_id")
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", insertable = false, updatable = false)
     private Event event;
 
     public Availability(User user, Event event, Date date) {

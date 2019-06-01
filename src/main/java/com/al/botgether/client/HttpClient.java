@@ -1,53 +1,73 @@
 package com.al.botgether.client;
 
-import org.springframework.http.*;
+import lombok.Getter;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
-class HttpClient {
-    private final static String BASE_URL = "http://localhost:8080";
-    private final RestTemplate rest;
+@Getter
+public class HttpClient {
+    private static final String BASE_URL = "http://localhost:";
+    public static int port = 8080;
+    
     private final HttpHeaders headers;
+    private final RestTemplate rest;
     private HttpStatus status;
 
-    HttpClient() {
+    public HttpClient() {
         this.rest = new RestTemplate();
         this.headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "*/*");
     }
 
-    String get(String uri) {
+    public String get(String uri) {
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity = rest.exchange(BASE_URL + uri, HttpMethod.GET, requestEntity, String.class);
-        this.setStatus(responseEntity.getStatusCode());
-        return responseEntity.getBody();
+        try {
+            ResponseEntity<String> responseEntity = rest.exchange(BASE_URL + port + uri, HttpMethod.GET, requestEntity, String.class);
+            status = new HttpStatus(responseEntity.getStatusCodeValue());
+            return responseEntity.getBody();
+        } catch (RestClientResponseException e) {
+            status = new HttpStatus(e.getRawStatusCode(), e.getResponseBodyAsString());
+            return null;
+        }
     }
 
-    String post(String uri, String json) {
+    public String post(String uri, String json) {
         HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
-        ResponseEntity<String> responseEntity = rest.exchange(BASE_URL + uri, HttpMethod.POST, requestEntity, String.class);
-        this.setStatus(responseEntity.getStatusCode());
-        return responseEntity.getBody();
+        try {
+            ResponseEntity<String> responseEntity = rest.exchange(BASE_URL + port + uri, HttpMethod.POST, requestEntity, String.class);
+            status = new HttpStatus(responseEntity.getStatusCodeValue());
+            return responseEntity.getBody();
+        } catch (RestClientResponseException e) {
+            status = new HttpStatus(e.getRawStatusCode(), e.getResponseBodyAsString());
+            return null;
+        }
     }
 
-    String put(String uri, String json) {
+    public String put(String uri, String json) {
         HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
-        ResponseEntity<String> responseEntity = rest.exchange(BASE_URL + uri, HttpMethod.PUT, requestEntity, String.class);
-        this.setStatus(responseEntity.getStatusCode());
-        return responseEntity.getBody();
+        try {
+            ResponseEntity<String> responseEntity = rest.exchange(BASE_URL + port + uri, HttpMethod.PUT, requestEntity, String.class);
+            status = new HttpStatus(responseEntity.getStatusCodeValue());
+            return responseEntity.getBody();
+        } catch (RestClientResponseException e) {
+            status = new HttpStatus(e.getRawStatusCode(), e.getResponseBodyAsString());
+            return null;
+        }
     }
 
-    void delete(String uri) {
-        HttpEntity<String> requestEntity = new HttpEntity<>("", headers);
-        ResponseEntity<Void> responseEntity = rest.exchange(BASE_URL + uri, HttpMethod.DELETE, requestEntity, Void.class);
-        this.setStatus(responseEntity.getStatusCode());
-    }
-
-    HttpStatus getStatus() {
-        return status;
-    }
-
-    private void setStatus(HttpStatus status) {
-        this.status = status;
+    public void delete(String uri, @Nullable String json) {
+        HttpEntity<String> requestEntity = json == null ? new HttpEntity<>(headers) : new HttpEntity<>(json, headers);
+        try {
+            ResponseEntity<Void> responseEntity = rest.exchange(BASE_URL + port + uri, HttpMethod.DELETE, requestEntity, Void.class);
+            status = new HttpStatus(responseEntity.getStatusCodeValue());
+        } catch (RestClientResponseException e) {
+            status = new HttpStatus(e.getRawStatusCode(), e.getResponseBodyAsString());
+        }
     }
 }

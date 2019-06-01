@@ -30,9 +30,28 @@ public interface EntityMapper {
     @Mapping(target = "availabilities", ignore = true)
     Event eventDtoToEvent(EventDto event);
 
-    @Mapping(source = "user", target = "userDto")
-    @Mapping(source = "event", target = "eventDto")
-    AvailabilityDto availabilityToAvailabilityDto(Availability availability);
+    default AvailabilityDto availabilityToAvailabilityDto(Availability availability) {
+        AvailabilityDto dto = new AvailabilityDto();
+        dto.setAvailabilityDate(availability.getAvailabilityDate());
+
+        if (availability.getUser() != null) {
+            dto.setUserDto(userToUserDto(availability.getUser()));
+        } else {
+            UserDto userDto = new UserDto();
+            userDto.setId(availability.getId().getUserId());
+            dto.setUserDto(userDto);
+        }
+
+        if (availability.getEvent() != null) {
+            dto.setEventDto(eventToEventDto(availability.getEvent()));
+        } else {
+            EventDto eventDto = new EventDto();
+            eventDto.setId(availability.getId().getEventId());
+            dto.setEventDto(eventDto);
+        }
+
+        return dto;
+    }
     List<AvailabilityDto> availabilitiesToAvailabilityDtos(List<Availability> availabilities);
 
     default Availability availabilityDtoToAvailability(AvailabilityDto availabilityDto) {

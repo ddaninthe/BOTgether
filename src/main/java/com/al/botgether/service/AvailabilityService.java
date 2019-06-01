@@ -1,7 +1,9 @@
 package com.al.botgether.service;
 
 import com.al.botgether.dto.AvailabilityDto;
+import com.al.botgether.dto.EventDto;
 import com.al.botgether.entity.Availability;
+import com.al.botgether.entity.AvailabilityKey;
 import com.al.botgether.mapper.EntityMapper;
 import com.al.botgether.repository.AvailabilityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,12 @@ import java.util.List;
 @Service
 public class AvailabilityService {
     private final AvailabilityRepository availabilityRepository;
+    private final EventService eventService;
 
     @Autowired
-    public AvailabilityService(AvailabilityRepository availabilityRepository) {
+    public AvailabilityService(AvailabilityRepository availabilityRepository, EventService eventService) {
         this.availabilityRepository = availabilityRepository;
+        this.eventService = eventService;
     }
 
     @Transactional
@@ -39,13 +43,20 @@ public class AvailabilityService {
 
     @Transactional
     public AvailabilityDto saveAvailability(AvailabilityDto availabilityDto) {
-        Availability availability = EntityMapper.instance.availabilityDtoToAvailability(availabilityDto);
-        return EntityMapper.instance.availabilityToAvailabilityDto(availabilityRepository.save(availability));
+        EventDto e = eventService.getById(availabilityDto.getEventDto().getId());
+        if (e != null) {
+            Availability availability = EntityMapper.instance.availabilityDtoToAvailability(availabilityDto);
+            return EntityMapper.instance.availabilityToAvailabilityDto(availabilityRepository.save(availability));
+        }
+        else {
+            return null;
+        }
     }
 
     @Transactional
-    public void deleteAvailability(AvailabilityDto availabilityDto) {
-        Availability availability = EntityMapper.instance.availabilityDtoToAvailability(availabilityDto);
+    public void deleteAvailability(AvailabilityKey availabilityKey) {
+        Availability availability = new Availability();
+        availability.setId(availabilityKey);
         availabilityRepository.delete(availability);
     }
 }
