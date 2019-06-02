@@ -2,6 +2,7 @@ package com.al.botgether.client;
 
 import com.google.gson.JsonParser;
 import lombok.Getter;
+import org.springframework.web.client.RestClientResponseException;
 
 @Getter
 public class HttpStatus {
@@ -12,12 +13,16 @@ public class HttpStatus {
         this.value = value;
     }
 
-    HttpStatus(int value, String responseBody) {
+    HttpStatus(int value, RestClientResponseException exception) {
         this.value = value;
-        errorMessage = new JsonParser()
-                .parse(responseBody)
-                .getAsJsonObject()
-                .get("message").getAsString(); // TODO: change this field
+        try {
+            errorMessage = new JsonParser()
+                    .parse(exception.getResponseBodyAsString())
+                    .getAsJsonObject()
+                    .get("message").getAsString(); // TODO: change this field
+        } catch (IllegalStateException e) {
+            errorMessage = exception.getMessage();
+        }
     }
 
     public boolean is2xxSuccessful() {

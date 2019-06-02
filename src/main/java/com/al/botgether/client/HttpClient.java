@@ -32,7 +32,7 @@ public class HttpClient {
             status = new HttpStatus(responseEntity.getStatusCodeValue());
             return responseEntity.getBody();
         } catch (RestClientResponseException e) {
-            status = new HttpStatus(e.getRawStatusCode(), e.getResponseBodyAsString());
+            status = new HttpStatus(e.getRawStatusCode(), e);
             return null;
         }
     }
@@ -44,7 +44,7 @@ public class HttpClient {
             status = new HttpStatus(responseEntity.getStatusCodeValue());
             return responseEntity.getBody();
         } catch (RestClientResponseException e) {
-            status = new HttpStatus(e.getRawStatusCode(), e.getResponseBodyAsString());
+            status = new HttpStatus(e.getRawStatusCode(), e);
             return null;
         }
     }
@@ -56,7 +56,7 @@ public class HttpClient {
             status = new HttpStatus(responseEntity.getStatusCodeValue());
             return responseEntity.getBody();
         } catch (RestClientResponseException e) {
-            status = new HttpStatus(e.getRawStatusCode(), e.getResponseBodyAsString());
+            status = new HttpStatus(e.getRawStatusCode(), e);
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class HttpClient {
             ResponseEntity<Void> responseEntity = rest.exchange(BASE_URL + port + uri, HttpMethod.DELETE, requestEntity, Void.class);
             status = new HttpStatus(responseEntity.getStatusCodeValue());
         } catch (RestClientResponseException e) {
-            status = new HttpStatus(e.getRawStatusCode(), e.getResponseBodyAsString());
+            status = new HttpStatus(e.getRawStatusCode(), e);
         }
     }
 }
