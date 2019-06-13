@@ -9,15 +9,18 @@ import com.al.botgether.entity.User;
 import com.al.botgether.mapper.EntityMapper;
 import com.google.gson.Gson;
 import net.dv8tion.jda.core.entities.Message;
-import org.mapstruct.ap.shaded.freemarker.template.utility.DateUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class CommandManager {
-    private static final String DATE_FORMAT = "dd/MM/yyyy hh";
+import static com.al.botgether.client.BotClient.COMMAND_PREFIX;
+
+public class CommandManager {
+    public static final String DATE_FORMAT = "dd/MM/yyyy hh";
+    private static final String DISPLAY_FORMAT = "dd/MM/yyyy HH:mm";
 
     static final Map<String, Command> commands = new HashMap<>();
     private static final Gson gson = new Gson();
@@ -34,6 +37,8 @@ class CommandManager {
         private static final String REGISTER = "register";
         private static final String UPDATE_EVENT = "update";
     }
+
+    private CommandManager() {}
 
     static {
         /*
@@ -54,7 +59,7 @@ class CommandManager {
 
             String response;
             if (tokens.length > 2) {
-                if (tokens[2].matches("^\\d+$")){
+                if (StringUtils.isNumeric(tokens[2])){
                     User user = jdaUserToAppUser(event.getAuthor());
                     HttpClient client = new HttpClient();
 
@@ -64,10 +69,10 @@ class CommandManager {
                                 .filter(dto -> dto.getEventDto().getId() == Long.parseLong(tokens[2]))
                                 .collect(Collectors.toList());
 
-                        if (dtos.size() > 0) {
-                            StringBuilder responseBuilder = new StringBuilder("List of dates :\n");
+                        if (!dtos.isEmpty()) {
+                            StringBuilder responseBuilder = new StringBuilder("__List of dates__\n");
                             for (AvailabilityDto dto : dtos) {
-                                responseBuilder.append(dto.getAvailabilityDate().toString()).append("\n");
+                                responseBuilder.append(dto.getAvailabilityDate()).append("\n");
                             }
                             response = responseBuilder.toString();
                         } else {
@@ -75,13 +80,10 @@ class CommandManager {
                         }
                     }
                     else if (tokens.length > 4) {
-                        // TODO: fix date
                         if (tokens[1].equals("add") || tokens[1].equals("remove")) {
                             SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-                            sdf.setTimeZone(DateUtil.UTC);
                             try {
                                 Date date = sdf.parse(tokens[3] + " " + tokens[4]);
-
                                 AvailabilityKey key = new AvailabilityKey(user.getId(), Long.parseLong(tokens[2]), date);
                                 Availability availability = new Availability();
                                 availability.setId(key);
@@ -96,7 +98,8 @@ class CommandManager {
                                         response = getErrorMessage(status);
                                     }
                                 } else {
-                                    client.delete("/availabilities", gson.toJson(availability));
+                                    client.delete("/availabilities",
+                                            gson.toJson(EntityMapper.instance.availabilityToAvailabilityDto(availability)));
                                     HttpStatus status = client.getStatus();
                                     if (status.getValue() == 204) {
                                         response = "Availability removed!";
@@ -118,7 +121,7 @@ class CommandManager {
                     response = "Event id *" + tokens[2] + "* is invalid.";
                 }
             } else {
-                response = "Please use `$avail <action> <event_id> <date>`, **date** is mandatory if you used the **add** or **remove** action";
+                response = "Please use `" + COMMAND_PREFIX + "avail <action> <event_id> <date>`, **date** is mandatory if you used the **add** or **remove** action";
             }
 
             event.getChannel().sendMessage(response).queue();
@@ -131,7 +134,7 @@ class CommandManager {
            String[] tokens = tokenize(event.getMessage());
 
            String response;
-           if (tokens.length > 1 && tokens[1].matches("^\\d+$")) {
+           if (tokens.length > 1 && StringUtils.isNumeric(tokens[1])) {
                HttpClient httpClient = new HttpClient();
                response = httpClient.get("/availabilities/best/" + tokens[1]);
 
@@ -163,9 +166,9 @@ class CommandManager {
 
             String response;
             if (tokens.length < 2) {
-                response = "Please use `$close <event_id>`.";
+                response = "Please use `" + COMMAND_PREFIX + "close <event_id>`.";
             }
-            else if (tokens[1].matches("^\\d$")) {
+            else if (StringUtils.isNumeric(tokens[1])) {
                 User user = jdaUserToAppUser(event.getAuthor());
                 HttpClient client = new HttpClient();
                 response = client.get("/events/");
@@ -203,7 +206,7 @@ class CommandManager {
 
             String response;
             if (tokens.length < 2) {
-                response = "Please use `$create <title> <description>`, *description* is optional but recommended.";
+                response = "Please use `" + COMMAND_PREFIX + "create <title> <description>`, *description* is optional but recommended.";
             }
             else  {
                 User user = jdaUserToAppUser(event.getAuthor());
@@ -244,7 +247,7 @@ class CommandManager {
 
             String response;
             if (tokens.length > 1) {
-                if (tokens[1].matches("^\\d$")) {
+                if (StringUtils.isNumeric(tokens[1])) {
                     HttpClient client = new HttpClient();
                     client.delete("/events/" + tokens[1], null);
                     HttpStatus status = client.getStatus();
@@ -279,7 +282,7 @@ class CommandManager {
                         .sorted(Comparator.comparing(AvailabilityDto::getAvailabilityDate, Comparator.nullsLast(Comparator.reverseOrder())))
                         .collect(Collectors.toList());
 
-                if (dtos.size() > 0) {
+                if (!dtos.isEmpty()) {
                     response = "A list of your events has been sent to your private messages.";
 
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -320,24 +323,24 @@ class CommandManager {
         commands.put(CommandList.HELP, event -> event.getChannel()
                 .sendMessage("__Commands__\n" +
                         "\n" +
-                        "__First__ please say `$" + CommandList.REGISTER + "` to register to the bot service.\n" +
+                        "__First__ please say `" + COMMAND_PREFIX + "" + CommandList.REGISTER + "` to register to the bot service.\n" +
                         "\n" +
                         "***" + CommandList.WEEK_AGENDA + "*** - Get the events for this week.\n" +
                         "\n" +
-                        "***" + CommandList.AVAILABILITY + "*** - `$" + CommandList.AVAILABILITY + " <action> <event_id> <date>` get all availabilities for an event or adds/removes a new one. " +
+                        "***" + CommandList.AVAILABILITY + "*** - `" + COMMAND_PREFIX + "" + CommandList.AVAILABILITY + " <action> <event_id> <date>` get all availabilities for an event or adds/removes a new one. " +
                         "`<action>` must be **all**, **add** or **remove**. `<date>` is mandatory when using **add** or **remove** and must be to the format : `" + DATE_FORMAT + "`" +
                         "\n" +
-                        "***" + CommandList.BEST_DATE + "*** - `$" + CommandList.BEST_DATE + " <event_id>` gets the best date of an event.\n" +
+                        "***" + CommandList.BEST_DATE + "*** - `" + COMMAND_PREFIX + "" + CommandList.BEST_DATE + " <event_id>` gets the best date of an event.\n" +
                         "\n" +
-                        "***" + CommandList.CLOSE_EVENT + "*** - `$" + CommandList.CLOSE_EVENT + " <event_id>` sets an event date with the date given by `$" + CommandList.BEST_DATE + "`.\n" +
+                        "***" + CommandList.CLOSE_EVENT + "*** - `" + COMMAND_PREFIX + "" + CommandList.CLOSE_EVENT + " <event_id>` sets an event date with the date given by `" + COMMAND_PREFIX + "" + CommandList.BEST_DATE + "`.\n" +
                         "\n" +
-                        "***" + CommandList.CREATE_EVENT + "*** - `$" + CommandList.CREATE_EVENT + " <title> <description>` creates an event with a *title*, *description* is optional but recommended.\n" +
+                        "***" + CommandList.CREATE_EVENT + "*** - `" + COMMAND_PREFIX + "" + CommandList.CREATE_EVENT + " <title> <description>` creates an event with a *title*, *description* is optional but recommended.\n" +
                         "\n" +
-                        "***" + CommandList.DELETE_EVENT + "*** - `" + CommandList.DELETE_EVENT + " <event_id>` deletes an event.\n" +
+                        "***" + CommandList.DELETE_EVENT + "*** - `" + COMMAND_PREFIX + "" + CommandList.DELETE_EVENT + " <event_id>` deletes an event.\n" +
                         "\n" +
                         "***" + CommandList.LIST_EVENTS + "*** - Get the event titles and ids you're in.\n" +
                         "\n" +
-                        "***" + CommandList.UPDATE_EVENT + "*** - `$" + CommandList.UPDATE_EVENT + " <event_id> <field> <new_value>` updates the title or the description of an event. `<field>` must be **title** or **description**.")
+                        "***" + CommandList.UPDATE_EVENT + "*** - `" + COMMAND_PREFIX + "" + CommandList.UPDATE_EVENT + " <event_id> <field> <new_value>` updates the title or the description of an event. `<field>` must be **title** or **description**.")
                 .queue());
 
         /*
@@ -369,9 +372,9 @@ class CommandManager {
             String response;
 
             if (tokens.length < 4 || (!tokens[2].equals("title") && !tokens[2].equals("description"))) {
-                response = "Please use `$update <event_id> <field> <new_value>` where `<field>` must be **title** or **description**.";
+                response = "Please use `" + COMMAND_PREFIX + "update <event_id> <field> <new_value>` where `<field>` must be **title** or **description**.";
             }
-            else if (!tokens[1].matches("^\\d+$")) {
+            else if (!StringUtils.isNumeric(tokens[1])) {
                 response = "Event id *" + tokens[1] + "* is invalid.";
             }
             else {

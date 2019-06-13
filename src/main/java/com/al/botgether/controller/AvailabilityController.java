@@ -61,8 +61,8 @@ public class AvailabilityController {
     }
 
     @DeleteMapping
-    public ResponseEntity deleteAvailability(@RequestBody AvailabilityKey availabilityKey) {
-        availabilityService.deleteAvailability(availabilityKey);
+    public ResponseEntity deleteAvailability(@RequestBody AvailabilityDto availabilityDto) {
+        availabilityService.deleteAvailability(availabilityDto);
         return ResponseEntity.noContent()
                 .headers(headers)
                 .build();

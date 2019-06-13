@@ -3,7 +3,6 @@ package com.al.botgether.service;
 import com.al.botgether.dto.AvailabilityDto;
 import com.al.botgether.dto.EventDto;
 import com.al.botgether.entity.Availability;
-import com.al.botgether.entity.AvailabilityKey;
 import com.al.botgether.mapper.EntityMapper;
 import com.al.botgether.repository.AvailabilityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +53,8 @@ public class AvailabilityService {
     }
 
     @Transactional
-    public void deleteAvailability(AvailabilityKey availabilityKey) {
-        Availability availability = new Availability();
-        availability.setId(availabilityKey);
+    public void deleteAvailability(AvailabilityDto availabilityDto) {
+        Availability availability = EntityMapper.instance.availabilityDtoToAvailability(availabilityDto);
         availabilityRepository.delete(availability);
     }
 }

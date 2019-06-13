@@ -11,12 +11,17 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 import org.mapstruct.factory.Mappers;
+import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Mapper(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 @SuppressWarnings("squid:S1214") // Suppress Sonar warning
 public interface EntityMapper {
+    String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     EntityMapper instance = Mappers.getMapper(EntityMapper.class);
 
     UserDto userToUserDto(User user);
@@ -32,7 +37,8 @@ public interface EntityMapper {
 
     default AvailabilityDto availabilityToAvailabilityDto(Availability availability) {
         AvailabilityDto dto = new AvailabilityDto();
-        dto.setAvailabilityDate(availability.getAvailabilityDate());
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        dto.setAvailabilityDate(sdf.format(availability.getAvailabilityDate()));
 
         if (availability.getUser() != null) {
             dto.setUserDto(userToUserDto(availability.getUser()));
@@ -59,7 +65,16 @@ public interface EntityMapper {
         Event event = eventDtoToEvent(availabilityDto.getEventDto());
         User user = userDtoToUser(availabilityDto.getUserDto());
 
-        availability.setId(new AvailabilityKey(user.getId(), event.getId(), availabilityDto.getAvailabilityDate()));
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        Date date;
+        try {
+            date = sdf.parse(availabilityDto.getAvailabilityDate());
+        } catch (ParseException e) {
+            date = null;
+            LoggerFactory.getLogger(EntityMapper.class).error("Error parsing date", e);
+        }
+
+        availability.setId(new AvailabilityKey(user.getId(), event.getId(), date));
         availability.setEvent(event);
         availability.setUser(user);
 

@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -48,6 +49,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 )
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@SuppressWarnings("squid:S2699") // Remove Sonar Warning for "no assertion"
 public class AvailabilityControllerTest {
     @LocalServerPort
     private int port;
@@ -83,9 +85,11 @@ public class AvailabilityControllerTest {
     }
 
     @Test
-    public void should_add_availability() {
-        Date anotherDate = new Date();
-        AvailabilityKey key = new AvailabilityKey("0123456789", 123456789, anotherDate);
+    public void should_add_availability() throws ParseException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.MILLISECOND, 0);
+        AvailabilityKey key = new AvailabilityKey("0123456789", 123456789, calendar.getTime());
         Availability avail = new Availability();
         avail.setId(key);
 
@@ -99,8 +103,10 @@ public class AvailabilityControllerTest {
                 .statusCode(201)
                 .extract().body().as(AvailabilityDto.class);
 
+        SimpleDateFormat sdf = new SimpleDateFormat(EntityMapper.DATE_FORMAT);
+        Date date = sdf.parse(dto.getAvailabilityDate());
         assertThat(dto).isNotNull();
-        assertThat(dto.getAvailabilityDate().getTime()).isEqualTo(anotherDate.getTime());
+        assertThat(date).isEqualTo(calendar.getTime());
         assertThat(dto.getEventDto().getId()).isEqualTo(123456789);
         assertThat(dto.getUserDto().getId()).isEqualTo("0123456789");
     }
@@ -119,5 +125,20 @@ public class AvailabilityControllerTest {
             .post("/availabilities")
         .then()
             .statusCode(400);
+    }
+
+    @Test
+    public void should_delete_availability() {
+        AvailabilityKey key = new AvailabilityKey("0123456789", 123456789, bestDate);
+        Availability availability = new Availability();
+        availability.setId(key);
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(EntityMapper.instance.availabilityToAvailabilityDto(availability))
+        .when()
+            .delete("/availabilities")
+        .then()
+            .statusCode(204);
     }
 }

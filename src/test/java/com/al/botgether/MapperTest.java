@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -93,12 +94,13 @@ public class MapperTest {
     public void should_map_availability_to_dto() {
         User user = new User("123456789", "Avail", "0123", new ArrayList<>(), new ArrayList<>());
         Event event = new Event(124313, "Title", "Some nice description", null, user, new ArrayList<>());
-        Availability availability = new Availability(user, event, new Date());
+        Date date = new Date();
+        Availability availability = new Availability(user, event, date);
 
         AvailabilityDto dto = EntityMapper.instance.availabilityToAvailabilityDto(availability);
 
         assertThat(dto).isNotNull();
-        assertThat(dto.getAvailabilityDate()).isEqualTo(availability.getAvailabilityDate());
+        assertThat(dto.getAvailabilityDate()).isEqualTo(new SimpleDateFormat(EntityMapper.DATE_FORMAT).format(date));
         assertThat(dto.getEventDto().getId()).isEqualTo(124313);
         assertThat(dto.getUserDto().getId()).isEqualTo("123456789");
     }
@@ -112,7 +114,7 @@ public class MapperTest {
 
         AvailabilityDto dto = EntityMapper.instance.availabilityToAvailabilityDto(a);
         assertThat(dto).isNotNull();
-        assertThat(dto.getAvailabilityDate().getTime()).isEqualTo(date.getTime());
+        assertThat(dto.getAvailabilityDate()).isEqualTo(new SimpleDateFormat(EntityMapper.DATE_FORMAT).format(date));
         assertThat(dto.getUserDto().getId()).isEqualTo("0123456789");
         assertThat(dto.getEventDto().getId()).isEqualTo(123456789);
     }
@@ -130,7 +132,7 @@ public class MapperTest {
         AvailabilityDto dto = new AvailabilityDto();
         dto.setEventDto(eventDto);
         dto.setUserDto(userDto);
-        dto.setAvailabilityDate(date);
+        dto.setAvailabilityDate(new SimpleDateFormat(EntityMapper.DATE_FORMAT).format(date));
 
         Availability availability = EntityMapper.instance.availabilityDtoToAvailability(dto);
         assertThat(availability).isNotNull();

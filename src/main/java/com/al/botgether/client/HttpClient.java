@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 @Getter
 public class HttpClient {
     private static final String BASE_URL = "http://localhost:";
-    public static int port = 8080;
+    public final int port;
     
     private final HttpHeaders headers;
     private final RestTemplate rest;
@@ -20,6 +20,15 @@ public class HttpClient {
 
     public HttpClient() {
         this.rest = new RestTemplate();
+        this.port = 8080;
+        this.headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        headers.add("Accept", "*/*");
+    }
+
+    public HttpClient(int port) {
+        this.rest = new RestTemplate();
+        this.port = port;
         this.headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "*/*");
