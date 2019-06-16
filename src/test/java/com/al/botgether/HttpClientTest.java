@@ -3,15 +3,12 @@ package com.al.botgether;
 
 import com.al.botgether.client.HttpClient;
 import com.al.botgether.client.HttpStatus;
-import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -40,13 +37,5 @@ public class HttpClientTest {
         client.get("/events/314354676");
         HttpStatus status = client.getStatus();
         assertThat(status.getValue()).isEqualTo(404);
-    }
-
-    @Test
-    public void test() {
-        Date date = new Date();
-        Gson gson = new Gson();
-        System.out.println(date);
-        System.out.println(gson.toJson(date));
     }
 }

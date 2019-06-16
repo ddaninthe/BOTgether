@@ -1,5 +1,7 @@
 package com.al.botgether.client;
 
+import com.al.botgether.client.command.AvailabilityCommand;
+import com.al.botgether.client.command.CommandManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mapstruct.ap.shaded.freemarker.template.utility.DateUtil;
@@ -18,7 +20,7 @@ public class CommandManagerTest {
     @Test
     public void should_parse_date() throws ParseException {
         String dateToParse = "01/01/2019 14";
-        SimpleDateFormat sdf = new SimpleDateFormat(CommandManager.DATE_FORMAT);
+        SimpleDateFormat sdf = new SimpleDateFormat(AvailabilityCommand.DATE_FORMAT);
         sdf.setTimeZone(DateUtil.UTC);
         Date date = sdf.parse(dateToParse);
 

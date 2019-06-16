@@ -1,7 +1,6 @@
 package com.al.botgether.controller;
 
 import com.al.botgether.dto.AvailabilityDto;
-import com.al.botgether.entity.AvailabilityKey;
 import com.al.botgether.service.AvailabilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
