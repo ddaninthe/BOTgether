@@ -28,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Sql(
         statements = {
+                "delete from Availability where event_id = 123456789 and user_id = '0123456789'",
                 "delete from Event where id = 123456789",
                 "delete from User where id = '0123456789'"
         },
@@ -76,6 +77,7 @@ public class EventRepositoryTest {
         AvailabilityKey key = new AvailabilityKey("0123456789", 123456789, calendar.getTime());
         Availability availability = new Availability();
         availability.setId(key);
+
         availabilityRepository.save(availability);
 
         List<Event> events = eventRepository.getAllByUserIdAndDateSet("0123456789");
@@ -86,7 +88,5 @@ public class EventRepositoryTest {
         assertThat(e.getId()).isEqualTo(123456789);
         assertThat(e.getTitle()).isEqualTo("Test Event");
         assertThat(e.getEventDate().getTime()).isEqualTo(calendar.getTime().getTime());
-
-        availabilityRepository.delete(availability);
     }
 }
