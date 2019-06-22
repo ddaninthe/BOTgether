@@ -23,6 +23,7 @@ public class CommandManager extends ListenerAdapter {
         commands.put(DeleteEventCommand.COMMAND, new DeleteEventCommand());
         commands.put(ListEventCommand.COMMAND, new ListEventCommand());
         commands.put(HelpCommand.COMMAND, new HelpCommand(this));
+        commands.put(QuoteCommand.COMMAND, new QuoteCommand());
         commands.put(RegisterCommand.COMMAND, new RegisterCommand());
         commands.put(UpdateEventCommand.COMMAND, new UpdateEventCommand());
     }
