@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class EventService {
     private final EventRepository eventRepository;
@@ -25,6 +27,11 @@ public class EventService {
         return eventRepository.findById(id)
                 .map(EntityMapper.instance::eventToEventDto)
                 .orElse(null);
+    }
+
+    @Transactional
+    public List<EventDto> getWeekAgenda(String userId) {
+        return EntityMapper.instance.eventsToEventDtos(eventRepository.getAllByUserIdAndDateSet(userId));
     }
 
     @Transactional

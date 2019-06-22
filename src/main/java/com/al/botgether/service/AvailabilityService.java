@@ -30,12 +30,6 @@ public class AvailabilityService {
     }
 
     @Transactional
-    public List<AvailabilityDto> getAllByEventId(long eventId) {
-        return EntityMapper.instance
-                .availabilitiesToAvailabilityDtos(availabilityRepository.getAvailabilitiesByEventId(eventId));
-    }
-
-    @Transactional
     public Date getBestAvailability(long eventId) {
         return availabilityRepository.getBestAvailabilityByEventId(eventId);
     }

@@ -34,6 +34,7 @@ public interface EntityMapper {
     @Mapping(source ="creatorDto", target = "creator")
     @Mapping(target = "availabilities", ignore = true)
     Event eventDtoToEvent(EventDto event);
+    List<EventDto> eventsToEventDtos(List<Event> events);
 
     default AvailabilityDto availabilityToAvailabilityDto(Availability availability) {
         AvailabilityDto dto = new AvailabilityDto();

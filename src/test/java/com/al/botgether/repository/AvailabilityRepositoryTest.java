@@ -98,6 +98,9 @@ public class AvailabilityRepositoryTest {
         AvailabilityKey key = new AvailabilityKey("01234", 123456789, bestDate);
         Availability availability = new Availability();
         availability.setId(key);
+        List<Availability> firstList = availabilityRepository.getAvailabilitiesByUserId("01234");
+        assertThat(firstList).hasSize(1);
+
         availabilityRepository.delete(availability);
 
         List<Availability> list = availabilityRepository.getAvailabilitiesByUserId("01234");

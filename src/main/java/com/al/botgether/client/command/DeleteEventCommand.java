@@ -6,8 +6,7 @@ import lombok.NoArgsConstructor;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
-import static com.al.botgether.client.command.CommandManager.getErrorMessage;
-import static com.al.botgether.client.command.CommandManager.tokenize;
+import static com.al.botgether.client.command.CommandManager.*;
 
 /**
  * Deletes an event.

@@ -6,6 +6,7 @@ import com.al.botgether.dto.AvailabilityDto;
 import com.al.botgether.dto.EventDto;
 import com.al.botgether.entity.User;
 import com.google.gson.Gson;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -21,9 +22,11 @@ import static com.al.botgether.client.command.CommandManager.jdaUserToAppUser;
 /**
  * Returns the list of the events where the user is
  */
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class ListEventCommand implements Command {
     static final String COMMAND = "events";
+
+    static final String DISPLAY_FORMAT = "dd/MM/yyyy HH:mm";
 
     @Override
     public void execute(MessageReceivedEvent event) {
@@ -41,7 +44,7 @@ public class ListEventCommand implements Command {
             if (!dtos.isEmpty()) {
                 response = "A list of your events has been sent to your private messages.";
 
-                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                SimpleDateFormat format = new SimpleDateFormat(DISPLAY_FORMAT);
                 StringBuilder builder = new StringBuilder("__List of your events__\n");
 
                 int i = 0;

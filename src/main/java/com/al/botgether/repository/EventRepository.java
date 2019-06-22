@@ -24,6 +24,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("Update Event Set event_date = :new_date Where id = :id")
     void updateEventDate(@Param("id") long id, @Param("new_date") Date date);
 
-    @Query("Select e From Event e Where event_date is not null And event_date between :from_date and :to_date")
-    List<Event> getAllFromDateToDate(@Param("from_date") Date from, @Param("to_date") Date to);
+    @SuppressWarnings("SqlResolve")
+    @Query(value = "Select e.* From Event e INNER JOIN Availability a ON e.id = a.event_id " +
+            "Where e.event_date is not null " +
+            "And e.event_date between CURRENT_DATE And CURRENT_DATE + 7 " +
+            "And a.user_id = :user_id",
+            nativeQuery = true)
+    List<Event> getAllByUserIdAndDateSet(@Param("user_id") String userId);
 }

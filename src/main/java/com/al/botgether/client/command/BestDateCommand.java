@@ -10,8 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.al.botgether.client.command.CommandManager.getErrorMessage;
-import static com.al.botgether.client.command.CommandManager.tokenize;
+import static com.al.botgether.client.command.CommandManager.*;
 
 /**
  * Returns the best date for an event.

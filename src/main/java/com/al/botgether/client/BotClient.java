@@ -1,44 +1,21 @@
 package com.al.botgether.client;
 
-import com.al.botgether.client.command.Command;
 import com.al.botgether.client.command.CommandManager;
-import com.al.botgether.client.command.HelpCommand;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
-import java.util.Map;
 
-import static com.al.botgether.client.command.Command.COMMAND_PREFIX;
-
-public class BotClient extends ListenerAdapter {
+public class BotClient {
     private static final String TOKEN = "NTY1OTcxNDUxMzcxMzIzMzk0.XO-pBQ.9HAmIQuOtGgS8SgfX93CUc7Irsg";
 
     public static void startBot() {
         try {
             JDA jda = new JDABuilder(TOKEN).build();
-            jda.addEventListener(new BotClient());
+            jda.addEventListener(new CommandManager());
         } catch (LoginException e) {
             LoggerFactory.getLogger(BotClient.class).error("LoginException: ", e);
-        }
-    }
-
-    @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
-        String message = event.getMessage().getContentDisplay();
-
-        if (message.startsWith(COMMAND_PREFIX)) {
-            for (Map.Entry<String, Command> entry : CommandManager.commands.entrySet()) {
-                if (message.startsWith(COMMAND_PREFIX + entry.getKey())) {
-                    entry.getValue().execute(event);
-                    return;
-                }
-            }
-            event.getChannel().sendMessage("Unknown command, please see supported commands with `" +
-                    COMMAND_PREFIX + HelpCommand.COMMAND + "`").queue();
         }
     }
 }

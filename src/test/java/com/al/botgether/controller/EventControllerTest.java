@@ -3,7 +3,11 @@ package com.al.botgether.controller;
 
 import com.al.botgether.dto.EventDto;
 import com.al.botgether.dto.UserDto;
+import com.al.botgether.entity.Availability;
+import com.al.botgether.entity.AvailabilityKey;
 import com.al.botgether.entity.Event;
+import com.al.botgether.mapper.EntityMapper;
+import com.al.botgether.repository.AvailabilityRepository;
 import com.al.botgether.repository.EventRepository;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
@@ -17,9 +21,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
@@ -52,6 +54,8 @@ public class EventControllerTest {
 
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private AvailabilityRepository availabilityRepository;
 
     @Before
     public void setup() {
@@ -66,8 +70,7 @@ public class EventControllerTest {
             .statusCode(404);
     }
 
-    @Test
-    public void should_create_event() {
+    private EventDto createEventDto() {
         UserDto creator = new UserDto();
         creator.setId("0123456789");
         creator.setDiscriminator("9182");
@@ -77,7 +80,14 @@ public class EventControllerTest {
         dto.setTitle("Another Test Event");
         dto.setDescription("Let's dance");
         dto.setCreatorDto(creator);
-        dto.setEventDate(DateUtils.truncate(new Date(), Calendar.SECOND)); // Milliseconds are not stored into DataBase
+        dto.setEventDate(DateUtils.truncate(new Date(), Calendar.SECOND));
+
+        return dto;
+    }
+
+    @Test
+    public void should_create_event() {
+        EventDto dto = createEventDto();
 
         EventDto createdEvent =
                 given()
@@ -150,5 +160,42 @@ public class EventControllerTest {
             .delete("/events/9876543210")
         .then()
             .statusCode(204);
+    }
+
+    @Test
+    public void should_return_agenda() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.add(Calendar.DATE, 1);
+
+        EventDto dto = createEventDto();
+        dto.setEventDate(calendar.getTime());
+        Event savedEvent = eventRepository.save(EntityMapper.instance.eventDtoToEvent(dto));
+
+        AvailabilityKey key = new AvailabilityKey("0123456789", savedEvent.getId(), calendar.getTime());
+        Availability availability = new Availability();
+        availability.setId(key);
+
+        availabilityRepository.save(availability);
+
+        List<EventDto> dtos = Arrays.asList(
+            when()
+                .get("/events/agenda/0123456789")
+            .then()
+                .statusCode(200)
+                .extract().body().as(EventDto[].class));
+
+        assertThat(dtos).isNotNull();
+        assertThat(dtos).hasSize(1);
+        EventDto eventDto = dtos.get(0);
+        assertThat(eventDto.getId()).isEqualTo(savedEvent.getId());
+        assertThat(eventDto.getTitle()).isEqualTo("Another Test Event");
+        assertThat(eventDto.getDescription()).isEqualTo("Let's dance");
+        assertThat(eventDto.getEventDate().getTime()).isEqualTo(calendar.getTime().getTime());
+
+        availabilityRepository.deleteById(availability.getId());
+        eventRepository.deleteById(savedEvent.getId());
     }
 }

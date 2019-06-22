@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/events")
@@ -33,7 +34,15 @@ public class EventController {
         }
     }
 
-    // TODO: get from date to date by user
+    @GetMapping("/agenda/{user_id}")
+    public ResponseEntity getWeekAgenda(@PathVariable("user_id") String userId) {
+        List<EventDto> eventDtos = eventService.getWeekAgenda(userId);
+        if (eventDtos.isEmpty()) {
+            return ResponseEntity.notFound().headers(headers).build();
+        } else {
+            return ResponseEntity.ok().headers(headers).body(eventDtos);
+        }
+    }
 
     @PostMapping
     public ResponseEntity createEvent(@RequestBody EventDto eventDto) {

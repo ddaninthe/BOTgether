@@ -1,7 +1,6 @@
 package com.al.botgether.client;
 
 import com.al.botgether.client.command.AvailabilityCommand;
-import com.al.botgether.client.command.CommandManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mapstruct.ap.shaded.freemarker.template.utility.DateUtil;

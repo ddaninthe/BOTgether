@@ -5,11 +5,18 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.Comparator;
 
+import static com.al.botgether.client.command.CommandManager.COMMAND_PREFIX;
+
 /**
  * Displays the list of the available commands.
  */
 public class HelpCommand implements Command {
     public static final String COMMAND = "help";
+
+    private final CommandManager manager;
+    HelpCommand(CommandManager commandManager) {
+        manager = commandManager;
+    }
 
     @Override
     public void execute(MessageReceivedEvent event) {
@@ -19,7 +26,7 @@ public class HelpCommand implements Command {
         builder.append("__First__ please use `" + COMMAND_PREFIX + RegisterCommand.COMMAND +
                 "` to register to the bot service.\n");
 
-        CommandManager.commands.values().stream()
+        manager.getCommands().values().stream()
                 .sorted(Comparator.comparing(Command::getCommand))
                 .forEach(command -> builder.append("\n").append(command.helpMessage()));
 

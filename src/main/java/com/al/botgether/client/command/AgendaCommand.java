@@ -1,7 +1,17 @@
 package com.al.botgether.client.command;
 
+import com.al.botgether.client.HttpClient;
+import com.al.botgether.client.HttpStatus;
+import com.al.botgether.dto.EventDto;
+import com.google.gson.Gson;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.al.botgether.client.command.ListEventCommand.DISPLAY_FORMAT;
 
 /**
  * Returns the list of the events title and date for this week
@@ -12,8 +22,30 @@ public class AgendaCommand implements Command {
 
     @Override
     public void execute(MessageReceivedEvent event) {
-        // TODO
-        event.getChannel().sendMessage("TODO").queue();
+        HttpClient client = new HttpClient();
+        String response = client.get("/events/agenda/" + event.getAuthor().getId());
+
+        HttpStatus status = client.getStatus();
+
+        if (status.is2xxSuccessful()) {
+            Gson gson = new Gson();
+            List<EventDto> eventDtos = Arrays.asList(gson.fromJson(response, EventDto[].class));
+
+            SimpleDateFormat sdf = new SimpleDateFormat(DISPLAY_FORMAT);
+            StringBuilder builder = new StringBuilder("__Agenda__\n");
+            eventDtos.forEach(dto -> builder.append("\n")
+                    .append(dto.getTitle())
+                    .append(" #")
+                    .append(dto.getId())
+                    .append(": ")
+                    .append(sdf.format(dto.getEventDate())));
+
+            event.getAuthor().openPrivateChannel()
+                    .queue(channel -> channel.sendMessage(builder.toString()).queue());
+        }
+        else {
+            event.getChannel().sendMessage(status.getErrorMessage()).queue();
+        }
     }
 
     @Override
