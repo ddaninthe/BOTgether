@@ -19,6 +19,8 @@ import static com.al.botgether.client.command.CommandManager.*;
 public class BestDateCommand implements Command {
     static final String COMMAND = "best";
 
+    static final String DATE_DISPLAY_PATTERN = "dd/MM/yyyy HH:mm";
+
     @Override
     public void execute(MessageReceivedEvent event) {
         String[] tokens = tokenize(event.getMessage());
@@ -33,7 +35,7 @@ public class BestDateCommand implements Command {
             if (status.is2xxSuccessful()) {
                 Gson gson = new Gson();
                 Date bestDate = gson.fromJson(response, Date.class);
-                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                SimpleDateFormat format = new SimpleDateFormat(DATE_DISPLAY_PATTERN);
                 response = format.format(bestDate);
             }
             else if (status.getValue() == 404) {

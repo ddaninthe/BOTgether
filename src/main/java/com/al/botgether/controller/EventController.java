@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -59,6 +60,20 @@ public class EventController {
         return ResponseEntity.noContent()
                 .headers(headers)
                 .build();
+    }
+
+    @PutMapping("/{id}/best")
+    public ResponseEntity setEventDate(@PathVariable("id") long eventId) {
+        Date date = eventService.setEventDate(eventId);
+        if (date != null) {
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(date);
+        } else {
+            return ResponseEntity.notFound()
+                    .headers(headers)
+                    .build();
+        }
     }
 
     @DeleteMapping("/{id}")

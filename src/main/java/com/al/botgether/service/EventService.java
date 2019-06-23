@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -48,6 +49,15 @@ public class EventService {
             eventRepository.updateEventDate(eventDto.getId(), eventDto.getEventDate());
             availabilityRepository.deleteAllByEventWhenDateMismatch(eventDto.getId(), eventDto.getEventDate());
         }
+    }
+
+    @Transactional
+    public Date setEventDate(long id) {
+        Date date = availabilityRepository.getBestAvailabilityByEventId(id);
+        if (date != null) {
+            eventRepository.updateEventDate(id, date);
+        }
+        return date;
     }
 
     @Transactional

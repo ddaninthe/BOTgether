@@ -28,6 +28,6 @@ public class Event implements Serializable {
     @JoinColumn(name="creator", nullable = false)
     private User creator;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.REMOVE)
     private List<Availability> availabilities;
 }

@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static com.al.botgether.client.command.BestDateCommand.DATE_DISPLAY_PATTERN;
 import static com.al.botgether.client.command.CommandManager.*;
 
 /**
@@ -29,9 +33,10 @@ public class CloseEventCommand implements Command {
         else if (StringUtils.isNumeric(tokens[1])) {
             User user = jdaUserToAppUser(event.getAuthor());
             HttpClient client = new HttpClient();
-            response = client.get("/events/");
+            response = client.get("/events/" + tokens[1]);
 
-            if (client.getStatus().is2xxSuccessful()) {
+            HttpStatus status = client.getStatus();
+            if (status.is2xxSuccessful()) {
                 Gson gson = new Gson();
                 String creatorId = gson.fromJson(response, EventDto.class).getCreatorDto().getId();
 
@@ -39,21 +44,24 @@ public class CloseEventCommand implements Command {
                     EventDto eventDto = new EventDto();
                     eventDto.setId(Long.parseLong(tokens[1]));
 
-                    client.put("/events/" + tokens[1], gson.toJson(eventDto));
-                    HttpStatus status = client.getStatus();
+                    response = client.put("/events/" + tokens[1] + "/best", null);
+                    status = client.getStatus();
                     if (status.getValue() == 200) {
-                        response = "Successfully updated the event";
+                        Date bestDate = gson.fromJson(response, Date.class);
+                        SimpleDateFormat sdf = new SimpleDateFormat(DATE_DISPLAY_PATTERN);
+                        response = "Event " + tokens[1] + " date has been set to " + sdf.format(bestDate);
                     } else {
                         response = getErrorMessage(status);
                     }
                 } else {
                     response = "Only the event creator can close it!";
                 }
+            } else {
+                response = getErrorMessage(status);
             }
         } else {
             response = "Event id *" + tokens[1] + "* is invalid.";
         }
-
         event.getChannel().sendMessage(response).queue();
     }
 

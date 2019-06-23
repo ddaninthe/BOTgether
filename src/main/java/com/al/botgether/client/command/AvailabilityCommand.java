@@ -76,6 +76,8 @@ public class AvailabilityCommand implements Command {
                                 HttpStatus status = client.getStatus();
                                 if (status.is2xxSuccessful()) {
                                     response = "Availability added!";
+                                } else if (status.is4xxClientError()) {
+                                    response = "Bad command. Please make sure the event exists.";
                                 } else {
                                     response = getErrorMessage(status);
                                 }

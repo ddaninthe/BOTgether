@@ -19,7 +19,7 @@ public class HttpStatus {
             errorMessage = new JsonParser()
                     .parse(exception.getResponseBodyAsString())
                     .getAsJsonObject()
-                    .get("message").getAsString(); // TODO: change this field
+                    .get("message").getAsString();
         } catch (IllegalStateException e) {
             errorMessage = exception.getMessage();
         }

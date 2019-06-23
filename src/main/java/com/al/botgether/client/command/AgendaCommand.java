@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.al.botgether.client.command.CommandManager.getErrorMessage;
 import static com.al.botgether.client.command.ListEventCommand.DISPLAY_FORMAT;
 
 /**
@@ -43,8 +44,12 @@ public class AgendaCommand implements Command {
             event.getAuthor().openPrivateChannel()
                     .queue(channel -> channel.sendMessage(builder.toString()).queue());
         }
+        else if (status.getValue() == 404) {
+            response = "You have not any event this week.";
+            event.getChannel().sendMessage(response).queue();
+        }
         else {
-            event.getChannel().sendMessage(status.getErrorMessage()).queue();
+            event.getChannel().sendMessage(getErrorMessage(status)).queue();
         }
     }
 
