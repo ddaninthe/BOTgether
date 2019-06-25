@@ -24,6 +24,10 @@ public class Event implements Serializable {
     @Column(name = "event_date")
     private Date eventDate;
 
-    @OneToMany(mappedBy = "event")
-    List<Availability> availabilities;
+    @ManyToOne
+    @JoinColumn(name="creator", nullable = false)
+    private User creator;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.REMOVE)
+    private List<Availability> availabilities;
 }

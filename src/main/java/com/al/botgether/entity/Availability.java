@@ -16,17 +16,17 @@ import java.util.Date;
 @Entity
 public class Availability implements Serializable {
     @EmbeddedId
-    AvailabilityKey id;
+    private AvailabilityKey id;
 
     @ManyToOne
     @MapsId("user_id")
-    @JoinColumn(name = "user_id")
-    User user;
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
 
     @ManyToOne
     @MapsId("event_id")
-    @JoinColumn(name = "event_id")
-    Event event;
+    @JoinColumn(name = "event_id", insertable = false, updatable = false)
+    private Event event;
 
     public Availability(User user, Event event, Date date) {
         this.user = user;
