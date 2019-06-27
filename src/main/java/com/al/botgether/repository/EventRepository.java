@@ -27,7 +27,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @SuppressWarnings("SqlResolve")
     @Query(value = "Select e.* From Event e INNER JOIN Availability a ON e.id = a.event_id " +
             "Where e.event_date is not null " +
-            "And e.event_date between CURRENT_DATE And CURRENT_DATE + 7 " +
+            "And e.event_date between CURRENT_DATE And CURRENT_DATE + INTERVAL '7' DAY " +
             "And a.user_id = :user_id",
             nativeQuery = true)
     List<Event> getAllByUserIdAndDateSet(@Param("user_id") String userId);
