@@ -17,6 +17,8 @@ public class BotClient {
         try {
             JDA jda = new JDABuilder(TOKEN).build();
             jda.addEventListener(new CommandManager());
+
+            new Scheduler(jda);
         } catch (LoginException e) {
             LoggerFactory.getLogger(BotClient.class).error("LoginException: ", e);
         }

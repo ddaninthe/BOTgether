@@ -1,7 +1,6 @@
 package com.al.botgether.controller;
 
 import com.al.botgether.dto.AvailabilityDto;
-import com.al.botgether.entity.Availability;
 import com.al.botgether.service.AvailabilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +25,7 @@ public class AvailabilityController {
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
     }
 
-    @GetMapping
+    @GetMapping("/today")
     public ResponseEntity getAllForToday() {
         List<AvailabilityDto> dtos = availabilityService.getAllForToday();
         return ResponseEntity.ok()
