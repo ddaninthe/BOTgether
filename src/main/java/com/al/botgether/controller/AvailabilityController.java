@@ -9,8 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/availabilities")
@@ -25,22 +25,38 @@ public class AvailabilityController {
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
     }
 
-    @PostMapping
-    public ResponseEntity createAvailability(@RequestBody AvailabilityDto availabilityDto) {
-        try {
-            AvailabilityDto dto = availabilityService.saveAvailability(availabilityDto);
-            return new ResponseEntity<>(dto, headers, HttpStatus.CREATED);
-        } catch(EntityNotFoundException e) {
-            return new ResponseEntity<>("error: " + e.getMessage(), headers, HttpStatus.NOT_FOUND);
+    @GetMapping("/best/{event_id}")
+    public ResponseEntity getBestAvailability(@PathVariable("event_id") long id) {
+        Date bestDate = availabilityService.getBestAvailability(id);
+        if (bestDate != null) {
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(bestDate);
+        } else {
+            return ResponseEntity.notFound()
+                    .headers(headers).build();
         }
     }
 
-    @GetMapping("/best/{eventId}")
-    public ResponseEntity getBestAvailability(@PathVariable("eventId") long id) {
-        Date bestDate = availabilityService.getBestAvailability(id);
+    @GetMapping("/user/{user_id}")
+    public ResponseEntity getAvailabilitiesByUser(@PathVariable("user_id") String userId) {
+        List<AvailabilityDto> availabilities = availabilityService.getAllByUserId(userId);
+
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(bestDate);
+                .body(availabilities);
+    }
+
+    @PostMapping
+    public ResponseEntity createAvailability(@RequestBody AvailabilityDto availabilityDto) {
+        AvailabilityDto dto = availabilityService.saveAvailability(availabilityDto);
+        if (dto != null) {
+            return new ResponseEntity<>(dto, headers, HttpStatus.CREATED);
+        } else {
+            return ResponseEntity.badRequest()
+                    .headers(headers)
+                    .build();
+        }
     }
 
     @DeleteMapping

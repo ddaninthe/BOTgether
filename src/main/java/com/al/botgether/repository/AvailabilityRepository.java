@@ -3,6 +3,7 @@ package com.al.botgether.repository;
 import com.al.botgether.entity.Availability;
 import com.al.botgether.entity.AvailabilityKey;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -20,4 +21,8 @@ public interface AvailabilityRepository extends JpaRepository<Availability, Avai
             " limit 1",
             nativeQuery = true)
     Date getBestAvailabilityByEventId(@Param("event_id") long eventId);
+
+    @Modifying
+    @Query("delete from Availability where event_id = :event_id and availability_date <> :date")
+    void deleteAllByEventWhenDateMismatch(@Param("event_id") long eventId, @Param("date") Date date);
 }

@@ -11,23 +11,54 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 import org.mapstruct.factory.Mappers;
+import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Mapper(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 @SuppressWarnings("squid:S1214") // Suppress Sonar warning
 public interface EntityMapper {
+    String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     EntityMapper instance = Mappers.getMapper(EntityMapper.class);
 
     UserDto userToUserDto(User user);
+    @Mapping(target = "createdEvents", ignore = true)
+    @Mapping(target = "availabilities", ignore = true)
     User userDtoToUser(UserDto user);
 
+    @Mapping(source ="creator", target = "creatorDto")
     EventDto eventToEventDto(Event event);
+    @Mapping(source ="creatorDto", target = "creator")
+    @Mapping(target = "availabilities", ignore = true)
     Event eventDtoToEvent(EventDto event);
+    List<EventDto> eventsToEventDtos(List<Event> events);
 
-    @Mapping(source = "user", target = "userDto")
-    @Mapping(source = "event", target = "eventDto")
-    AvailabilityDto availabilityToAvailabilityDto(Availability availability);
+    default AvailabilityDto availabilityToAvailabilityDto(Availability availability) {
+        AvailabilityDto dto = new AvailabilityDto();
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        dto.setAvailabilityDate(sdf.format(availability.getAvailabilityDate()));
+
+        if (availability.getUser() != null) {
+            dto.setUserDto(userToUserDto(availability.getUser()));
+        } else {
+            UserDto userDto = new UserDto();
+            userDto.setId(availability.getId().getUserId());
+            dto.setUserDto(userDto);
+        }
+
+        if (availability.getEvent() != null) {
+            dto.setEventDto(eventToEventDto(availability.getEvent()));
+        } else {
+            EventDto eventDto = new EventDto();
+            eventDto.setId(availability.getId().getEventId());
+            dto.setEventDto(eventDto);
+        }
+
+        return dto;
+    }
     List<AvailabilityDto> availabilitiesToAvailabilityDtos(List<Availability> availabilities);
 
     default Availability availabilityDtoToAvailability(AvailabilityDto availabilityDto) {
@@ -35,7 +66,16 @@ public interface EntityMapper {
         Event event = eventDtoToEvent(availabilityDto.getEventDto());
         User user = userDtoToUser(availabilityDto.getUserDto());
 
-        availability.setId(new AvailabilityKey(user.getId(), event.getId(), availabilityDto.getAvailabilityDate()));
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        Date date;
+        try {
+            date = sdf.parse(availabilityDto.getAvailabilityDate());
+        } catch (ParseException e) {
+            date = null;
+            LoggerFactory.getLogger(EntityMapper.class).error("Error parsing date", e);
+        }
+
+        availability.setId(new AvailabilityKey(user.getId(), event.getId(), date));
         availability.setEvent(event);
         availability.setUser(user);
 

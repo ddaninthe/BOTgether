@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -21,8 +22,10 @@ public class User implements Serializable {
     private String id;
     private String username;
     private String discriminator;
-    private String email;
 
-    @OneToMany(mappedBy = "user")
-    List<Availability> availabilities;
+    @OneToMany(mappedBy = "creator")
+    private List<Event> createdEvents;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Availability> availabilities;
 }

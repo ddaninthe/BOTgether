@@ -61,7 +61,6 @@ public class UserControllerTest {
         dto.setId(userTestId);
         dto.setUsername("John");
         dto.setDiscriminator("0123");
-        dto.setEmail("john@test.com");
 
         String location =
         given()
@@ -74,7 +73,6 @@ public class UserControllerTest {
             .body("id", is(userTestId))
             .body("username", is("John"))
             .body("discriminator", is("0123"))
-            .body("email", is("john@test.com"))
             .extract().header("Location");
 
         assertThat(location).contains("/users/" + userTestId);
@@ -82,7 +80,7 @@ public class UserControllerTest {
 
     @Test
     public void should_return_user() {
-        User user = new User(userTestId, "John", "0123", "john@test.com", new ArrayList<>());
+        User user = new User(userTestId, "John", "0123", new ArrayList<>(), new ArrayList<>());
         userRepository.save(user);
 
         UserDto userGet =
@@ -95,12 +93,11 @@ public class UserControllerTest {
         assertThat(userGet.getId()).isEqualTo(userTestId);
         assertThat(userGet.getUsername()).isEqualTo("John");
         assertThat(userGet.getDiscriminator()).isEqualTo("0123");
-        assertThat(userGet.getEmail()).isEqualTo("john@test.com");
     }
 
     @Test
     public void should_delete_user() {
-        User user = new User(userTestId, "John", "0123", "john@test.com", new ArrayList<>());
+        User user = new User(userTestId, "John", "0123", new ArrayList<>(), new ArrayList<>());
         userRepository.save(user);
 
         when()

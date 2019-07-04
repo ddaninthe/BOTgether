@@ -14,16 +14,21 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Long> {
     @Modifying
     @Query("Update Event Set title = :new_title Where id = :id")
-    public void updateEventTitle(@Param("id") long id, @Param("new_title") String title);
+    void updateEventTitle(@Param("id") long id, @Param("new_title") String title);
 
     @Modifying
     @Query("Update Event Set description = :new_description Where id = :id")
-    public void updateEventDescription(@Param("id") long id, @Param("new_description") String description);
+    void updateEventDescription(@Param("id") long id, @Param("new_description") String description);
 
     @Modifying
     @Query("Update Event Set event_date = :new_date Where id = :id")
-    public void updateEventDate(@Param("id") long id, @Param("new_date") Date date);
+    void updateEventDate(@Param("id") long id, @Param("new_date") Date date);
 
-    @Query("Select e From Event e Where event_date is not null And event_date between :from_date and :to_date")
-    public List<Event> getAllFromDateToDate(@Param("from_date") Date from, @Param("to_date") Date to);
+    @SuppressWarnings("SqlResolve")
+    @Query(value = "Select e.* From Event e INNER JOIN Availability a ON e.id = a.event_id " +
+            "Where e.event_date is not null " +
+            "And e.event_date between CURRENT_DATE And CURRENT_DATE + INTERVAL '7' DAY " +
+            "And a.user_id = :user_id",
+            nativeQuery = true)
+    List<Event> getAllByUserIdAndDateSet(@Param("user_id") String userId);
 }
