@@ -19,7 +19,7 @@ import static com.al.botgether.client.command.CommandManager.*;
 public class BestDateCommand implements Command {
     static final String COMMAND = "best";
 
-    static final String DATE_DISPLAY_PATTERN = "dd/MM/yyyy HH:mm";
+    public static final String DATE_DISPLAY_PATTERN = "dd/MM/yyyy HH:mm";
 
     @Override
     public void execute(MessageReceivedEvent event) {

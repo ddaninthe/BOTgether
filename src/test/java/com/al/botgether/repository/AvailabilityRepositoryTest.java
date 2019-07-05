@@ -1,7 +1,9 @@
 package com.al.botgether.repository;
 
+import com.al.botgether.dto.EventDto;
 import com.al.botgether.entity.Availability;
 import com.al.botgether.entity.AvailabilityKey;
+import com.al.botgether.service.EventService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -46,6 +49,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AvailabilityRepositoryTest {
     @Autowired
     private AvailabilityRepository availabilityRepository;
+    @Autowired
+    private EventService eventService;
 
     private Date bestDate;
 
@@ -105,5 +110,33 @@ public class AvailabilityRepositoryTest {
 
         List<Availability> list = availabilityRepository.getAvailabilitiesByUserId("01234");
         assertThat(list).hasSize(0);
+    }
+
+    @Test
+    public void should_get_today_availabilities() {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.MILLISECOND, 0);
+        c.set(Calendar.SECOND, 0);
+        c.add(Calendar.HOUR, 3);
+
+        AvailabilityKey key = new AvailabilityKey("0123456789", 123456789, c.getTime());
+        Availability a = new Availability();
+        a.setId(key);
+        availabilityRepository.save(a);
+
+        EventDto eventDto = new EventDto();
+        eventDto.setId(123456789);
+        eventDto.setEventDate(c.getTime());
+        eventService.updateEvent(eventDto);
+
+        List<Availability> todays = availabilityRepository.getAllForToday();
+
+        assertThat(todays).hasSize(1);
+        Availability today = todays.get(0);
+        assertThat(today.getId()).isNotNull();
+        AvailabilityKey todayKey = today.getId();
+        assertThat(today.getAvailabilityDate()).isEqualTo(c.getTime());
+        assertThat(todayKey.getUserId()).isEqualTo("0123456789");
+        assertThat(todayKey.getEventId()).isEqualTo(123456789);
     }
 }
