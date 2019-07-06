@@ -17,8 +17,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
@@ -55,6 +57,8 @@ public class AvailabilityControllerTest {
     private int port;
 
     private Date bestDate;
+
+    private Date today;
 
     @Before
     public void setup() throws ParseException {
@@ -140,5 +144,17 @@ public class AvailabilityControllerTest {
             .delete("/availabilities")
         .then()
             .statusCode(204);
+    }
+
+    @Test
+    public void should_return_all_availabilities_for_today(){
+        List<AvailabilityDto> availabilities = Arrays.asList(
+                when()
+                        .get("/availabilities/today")
+                .then()
+                        .statusCode(200)
+                .extract().body().as(AvailabilityDto[].class));
+
+        assertThat(availabilities).hasSize(0);
     }
 }
