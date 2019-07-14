@@ -25,6 +25,14 @@ public class AvailabilityController {
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
     }
 
+    @GetMapping("/today")
+    public ResponseEntity getAllForToday() {
+        List<AvailabilityDto> dtos = availabilityService.getAllForToday();
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(dtos);
+    }
+
     @GetMapping("/best/{event_id}")
     public ResponseEntity getBestAvailability(@PathVariable("event_id") long id) {
         Date bestDate = availabilityService.getBestAvailability(id);

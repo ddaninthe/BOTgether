@@ -51,4 +51,10 @@ public class AvailabilityService {
         Availability availability = EntityMapper.instance.availabilityDtoToAvailability(availabilityDto);
         availabilityRepository.delete(availability);
     }
+
+    @Transactional
+    public List<AvailabilityDto> getAllForToday() {
+        return EntityMapper.instance
+            .availabilitiesToAvailabilityDtos(availabilityRepository.getAllForToday());
+    }
 }
