@@ -15,9 +15,6 @@ script:
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
   - sonar-scanner
 
-script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
-
 deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY
