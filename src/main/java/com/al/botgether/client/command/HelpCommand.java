@@ -22,7 +22,7 @@ public class HelpCommand implements Command {
     public void execute(MessageReceivedEvent event) {
         MessageChannel channel = event.getChannel();
 
-        StringBuilder builder = new StringBuilder("__Commands__\n");
+        StringBuilder builder = new StringBuilder("__Commands__\n\n");
         builder.append("__First__ please use `" + COMMAND_PREFIX + RegisterCommand.COMMAND +
                 "` to register to the bot service.\n");
 
