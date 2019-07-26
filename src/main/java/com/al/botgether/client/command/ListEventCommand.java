@@ -59,7 +59,7 @@ public class ListEventCommand implements Command {
                     } else {
                         date = "Date not set.";
                     }
-                    builder.append(eventDto.getTitle()).append("\t").append(date);
+                    builder.append(eventDto.getTitle()).append("#").append(eventDto.getId()).append("\t").append(date);
                 }
                 event.getAuthor().openPrivateChannel()
                         .queue(channel -> channel.sendMessage(builder.toString()).queue());
