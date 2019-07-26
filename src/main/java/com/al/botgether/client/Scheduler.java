@@ -34,8 +34,6 @@ class Scheduler {
 
     @Scheduled(cron = "0 0 9 * * *")
     private void alertUsers() {
-        System.out.println("Called : " + jda);
-        System.out.println("Port: " + client.getPort());
         if (jda == null) return;
 
         String response = client.get("/availabilities/today");

@@ -122,6 +122,6 @@ public class AvailabilityCommand implements Command {
         return "***" + COMMAND + "*** - `" + COMMAND_PREFIX + COMMAND + " <action> <event_id> <date>` get all " +
                 "availabilities for an event or adds/removes a new one. `<action>` must be **" + ACTION_ALL +
                 "**, **" + ACTION_ADD + "** or **" + ACTION_REMOVE + "**. `<date>` is mandatory when using **" +
-                ACTION_ADD + "** or **" + ACTION_REMOVE + "** and must be to the format : `" + DATE_FORMAT + "`";
+                ACTION_ADD + "** or **" + ACTION_REMOVE + "** and must be to the format : `" + DATE_FORMAT + "`.";
     }
 }
